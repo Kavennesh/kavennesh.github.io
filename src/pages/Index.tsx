@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Download, ExternalLink, Mail, Phone, MapPin, Github, Linkedin, Instagram, Code, Award, Briefcase } from 'lucide-react';
@@ -15,7 +14,6 @@ import AboutSection from '@/components/AboutSection';
 import SkillsSection from '@/components/SkillsSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ContactSection from '@/components/ContactSection';
-import ArticlesSection from '@/components/ArticlesSection';
 import CodingProfilesSection from '@/components/CodingProfilesSection';
 import SocialLinksSection from '@/components/SocialLinksSection';
 
@@ -28,7 +26,6 @@ const Index = () => {
     { id: 'about', component: AboutSection, title: 'About' },
     { id: 'skills', component: SkillsSection, title: 'Skills' },
     { id: 'projects', component: ProjectsSection, title: 'Projects' },
-    { id: 'articles', component: ArticlesSection, title: 'Articles' },
     { id: 'coding', component: CodingProfilesSection, title: 'Coding Profiles' },
     { id: 'contact', component: ContactSection, title: 'Contact' },
     { id: 'social', component: SocialLinksSection, title: 'Social Links' }
