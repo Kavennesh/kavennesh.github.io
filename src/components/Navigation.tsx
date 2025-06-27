@@ -13,6 +13,11 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ sections, currentSection, onSectionChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleSectionClick = (index: number) => {
+    onSectionChange(index);
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* Mobile menu button */}
@@ -34,7 +39,7 @@ const Navigation: React.FC<NavigationProps> = ({ sections, currentSection, onSec
             {sections.map((section, index) => (
               <button
                 key={section.id}
-                onClick={() => onSectionChange(index)}
+                onClick={() => handleSectionClick(index)}
                 className={`px-4 py-2 rounded-full transition-all duration-300 ${
                   index === currentSection
                     ? 'bg-purple-500 text-white shadow-lg'
@@ -62,10 +67,7 @@ const Navigation: React.FC<NavigationProps> = ({ sections, currentSection, onSec
                 {sections.map((section, index) => (
                   <button
                     key={section.id}
-                    onClick={() => {
-                      onSectionChange(index);
-                      setIsOpen(false);
-                    }}
+                    onClick={() => handleSectionClick(index)}
                     className={`px-4 py-2 rounded-xl transition-all duration-300 text-left ${
                       index === currentSection
                         ? 'bg-purple-500 text-white shadow-lg'

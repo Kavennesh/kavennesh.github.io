@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Download, ExternalLink, Mail, Phone, MapPin, Github, Linkedin, Instagram, Code, Award, Briefcase } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from 'react-hook-form';
-import { toast } from '@/hooks/use-toast';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import ParticlesBackground from '@/components/ParticlesBackground';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
@@ -20,6 +14,7 @@ import SocialLinksSection from '@/components/SocialLinksSection';
 const Index = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const sectionsRef = useRef<HTMLDivElement[]>([]);
 
   const sections = [
     { id: 'hero', component: HeroSection, title: 'Home' },
@@ -36,16 +31,38 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
+      
+      for (let i = sectionsRef.current.length - 1; i >= 0; i--) {
+        const section = sectionsRef.current[i];
+        if (section && scrollPosition >= section.offsetTop) {
+          setCurrentSection(i);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (index: number) => {
+    const section = sectionsRef.current[index];
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const nextSection = () => {
-    setCurrentSection((prev) => (prev + 1) % sections.length);
+    const nextIndex = Math.min(currentSection + 1, sections.length - 1);
+    scrollToSection(nextIndex);
   };
 
   const prevSection = () => {
-    setCurrentSection((prev) => (prev - 1 + sections.length) % sections.length);
-  };
-
-  const goToSection = (index: number) => {
-    setCurrentSection(index);
+    const prevIndex = Math.max(currentSection - 1, 0);
+    scrollToSection(prevIndex);
   };
 
   if (isLoading) {
@@ -68,69 +85,37 @@ const Index = () => {
     );
   }
 
-  const CurrentSectionComponent = sections[currentSection].component;
-
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative">
       <ParticlesBackground />
       
       <Navigation 
         sections={sections} 
         currentSection={currentSection} 
-        onSectionChange={goToSection} 
+        onSectionChange={scrollToSection} 
       />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSection}
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -100 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="min-h-screen"
-        >
-          <CurrentSectionComponent 
-            onNext={nextSection}
-            onPrev={prevSection}
-            isFirst={currentSection === 0}
-            isLast={currentSection === sections.length - 1}
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Navigation arrows */}
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-40 flex flex-col gap-4">
-        <Button
-          onClick={prevSection}
-          variant="outline"
-          size="icon"
-          className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20"
-          disabled={currentSection === 0}
-        >
-          <ChevronDown className="h-4 w-4 rotate-180" />
-        </Button>
-        <Button
-          onClick={nextSection}
-          variant="outline"
-          size="icon"
-          className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20"
-          disabled={currentSection === sections.length - 1}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Section indicators */}
-      <div className="fixed right-4 bottom-8 z-40 flex flex-col gap-2">
-        {sections.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSection(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentSection ? 'bg-purple-400 scale-150' : 'bg-white/40'
-            }`}
-          />
-        ))}
+      <div className="relative z-10">
+        {sections.map((section, index) => {
+          const SectionComponent = section.component;
+          return (
+            <div
+              key={section.id}
+              ref={(el) => {
+                if (el) sectionsRef.current[index] = el;
+              }}
+              id={section.id}
+              className="min-h-screen"
+            >
+              <SectionComponent 
+                onNext={nextSection}
+                onPrev={prevSection}
+                isFirst={index === 0}
+                isLast={index === sections.length - 1}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
