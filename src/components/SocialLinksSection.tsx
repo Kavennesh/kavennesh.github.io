@@ -168,7 +168,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Final Call to Action */}
         <motion.div
