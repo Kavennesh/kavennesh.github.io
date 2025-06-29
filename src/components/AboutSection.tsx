@@ -118,7 +118,8 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-gray-900 rounded-lg border border-gray-700 shadow-2xl overflow-hidden"
+          className="rounded-lg border border-gray-700 shadow-2xl overflow-hidden"
+          style={{ backgroundColor: '#0d1117' }}
         >
           {/* Terminal Header */}
           <div className="bg-gray-800 px-4 py-3 flex items-center gap-2 border-b border-gray-700">
@@ -138,30 +139,43 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
             ref={terminalRef}
             className="p-6 h-96 overflow-y-auto cursor-text"
             onClick={handleTerminalClick}
+            style={{ backgroundColor: '#0d1117' }}
           >
             <div className="font-mono text-sm space-y-2">
               {history.map((line, index) => (
                 <div key={index}>
                   {line.type === 'command' && (
-                    <div className="text-green-400">{line.content}</div>
+                    <div style={{ color: '#00ff00' }}>{line.content}</div>
                   )}
                   {line.type === 'output' && (
                     <div className="text-gray-300 whitespace-pre-line">{line.content}</div>
                   )}
                   {line.type === 'prompt' && index === history.length - 1 && (
-                    <div className="flex items-center text-green-400">
-                      <span className="text-gray-500">$ </span>
+                    <div className="flex items-center">
+                      <span style={{ color: '#00ff00' }}>$ </span>
                       <input
                         ref={inputRef}
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        className="bg-transparent border-none outline-none text-green-400 flex-1 font-mono caret-green-400"
+                        className="bg-transparent border-none outline-none flex-1 font-mono"
+                        style={{ color: '#00ff00', caretColor: 'transparent' }}
                         autoComplete="off"
                         spellCheck="false"
                       />
-                      {showCursor && <span className="bg-green-400 text-gray-900 ml-1">_</span>}
+                      <span 
+                        className={`ml-0 ${showCursor ? 'opacity-100' : 'opacity-0'}`}
+                        style={{ 
+                          color: '#00ff00',
+                          backgroundColor: '#00ff00',
+                          width: '8px',
+                          height: '16px',
+                          display: 'inline-block'
+                        }}
+                      >
+                        &nbsp;
+                      </span>
                     </div>
                   )}
                 </div>
