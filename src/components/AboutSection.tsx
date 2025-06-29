@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Terminal } from 'lucide-react';
@@ -24,6 +23,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     { type: 'prompt', content: '' }
   ]);
   const [showCursor, setShowCursor] = useState(true);
+  const [showTerminal, setShowTerminal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +50,14 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+  }, []);
+
+  useEffect(() => {
+    // Trigger terminal animation after component mounts
+    const timer = setTimeout(() => {
+      setShowTerminal(true);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCommand = (cmd: string) => {
@@ -114,61 +122,71 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           </h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-gray-900 rounded-lg border border-gray-700 shadow-2xl overflow-hidden"
-        >
-          {/* Terminal Header */}
-          <div className="bg-gray-800 px-4 py-3 flex items-center gap-2 border-b border-gray-700">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            </div>
-            <div className="flex items-center gap-2 ml-4">
-              <Terminal className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-400 text-sm">john@portfolio:~</span>
-            </div>
-          </div>
+        <div className="relative">
+          {/* Animated green shape */}
+          <motion.div
+            initial={{ x: -200, opacity: 0 }}
+            animate={showTerminal ? { x: 0, opacity: 0.1 } : { x: -200, opacity: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="absolute -left-10 top-10 w-32 h-32 bg-green-500 rounded-full blur-xl"
+          />
 
-          {/* Terminal Content */}
-          <div 
-            ref={terminalRef}
-            className="p-6 h-96 overflow-y-auto cursor-text"
-            onClick={handleTerminalClick}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="bg-gray-900 rounded-lg border border-gray-700 shadow-2xl overflow-hidden relative z-10"
           >
-            <div className="font-mono text-sm space-y-2">
-              {history.map((line, index) => (
-                <div key={index}>
-                  {line.type === 'command' && (
-                    <div className="text-green-400">{line.content}</div>
-                  )}
-                  {line.type === 'output' && (
-                    <div className="text-gray-300 whitespace-pre-line">{line.content}</div>
-                  )}
-                  {line.type === 'prompt' && index === history.length - 1 && (
-                    <div className="flex items-center text-green-400">
-                      <span className="text-gray-500">$ </span>
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        className="bg-transparent border-none outline-none text-green-400 flex-1 font-mono caret-green-400"
-                        autoComplete="off"
-                        spellCheck="false"
-                      />
-                      {showCursor && <span className="bg-green-400 text-gray-900 ml-1">_</span>}
-                    </div>
-                  )}
-                </div>
-              ))}
+            {/* Terminal Header */}
+            <div className="bg-gray-800 px-4 py-3 flex items-center gap-2 border-b border-gray-700">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <Terminal className="h-4 w-4 text-gray-400" />
+                <span className="text-gray-400 text-sm">john@portfolio:~</span>
+              </div>
             </div>
-          </div>
-        </motion.div>
+
+            {/* Terminal Content */}
+            <div 
+              ref={terminalRef}
+              className="p-6 h-96 overflow-y-auto cursor-text"
+              onClick={handleTerminalClick}
+            >
+              <div className="font-mono text-sm space-y-2">
+                {history.map((line, index) => (
+                  <div key={index}>
+                    {line.type === 'command' && (
+                      <div className="text-green-400">{line.content}</div>
+                    )}
+                    {line.type === 'output' && (
+                      <div className="text-gray-300 whitespace-pre-line">{line.content}</div>
+                    )}
+                    {line.type === 'prompt' && index === history.length - 1 && (
+                      <div className="flex items-center text-green-400">
+                        <span className="text-gray-500">$ </span>
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                          onKeyPress={handleKeyPress}
+                          className="bg-transparent border-none outline-none text-green-400 flex-1 font-mono caret-green-400"
+                          autoComplete="off"
+                          spellCheck="false"
+                        />
+                        {showCursor && <span className="bg-green-400 text-gray-900 ml-1">_</span>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
         {/* Quick Stats */}
         <motion.div

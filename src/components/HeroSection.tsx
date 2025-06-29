@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,37 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+
+  const words = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Creative Coder'];
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const currentWord = words[currentWordIndex];
+      
+      if (isDeleting) {
+        setCurrentText(currentWord.substring(0, currentText.length - 1));
+        setTypingSpeed(75);
+      } else {
+        setCurrentText(currentWord.substring(0, currentText.length + 1));
+        setTypingSpeed(150);
+      }
+
+      if (!isDeleting && currentText === currentWord) {
+        setTimeout(() => setIsDeleting(true), 2000);
+      } else if (isDeleting && currentText === '') {
+        setIsDeleting(false);
+        setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentWordIndex, typingSpeed, words]);
+
   const handleDownloadResume = () => {
     // Create a dummy PDF download
     const link = document.createElement('a');
@@ -41,9 +72,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-xl md:text-2xl text-gray-300 mb-8"
+            className="text-xl md:text-2xl text-gray-300 mb-8 h-8"
           >
-            <span className="typing-animation">Full Stack Developer & UI/UX Designer</span>
+            <span className="font-mono">
+              {currentText}
+              <span className="animate-pulse">|</span>
+            </span>
           </motion.div>
 
           <motion.p
