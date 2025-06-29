@@ -22,8 +22,8 @@ const Index = () => {
     { id: 'skills', component: SkillsSection, title: 'Skills' },
     { id: 'projects', component: ProjectsSection, title: 'Projects' },
     { id: 'coding', component: CodingProfilesSection, title: 'Coding Profiles' },
-    { id: 'contact', component: ContactSection, title: 'Contact' },
-    { id: 'social', component: SocialLinksSection, title: 'Social Links' }
+    { id: 'social', component: SocialLinksSection, title: 'Social Links' },
+    { id: 'contact', component: ContactSection, title: 'Contact' }
   ];
 
   useEffect(() => {

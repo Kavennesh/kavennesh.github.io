@@ -91,7 +91,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-transparent">
             Let's Connect
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -177,7 +177,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
           transition={{ duration: 0.8, delay: 1 }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl p-12 border border-indigo-500/30">
+          <div className="bg-gradient-to-r from-gray-800/20 to-black/20 rounded-2xl p-12 border border-gray-600/30">
             <motion.h3 
               className="text-4xl font-bold text-white mb-6"
               initial={{ opacity: 0 }}
@@ -203,7 +203,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Button 
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-8 py-4 text-lg"
+                className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-4 text-lg"
                 onClick={() => window.open('mailto:john.doe@email.com')}
               >
                 <Mail className="mr-2 h-5 w-5" />
@@ -211,7 +211,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
               </Button>
               <Button 
                 variant="outline"
-                className="border-2 border-indigo-400 text-indigo-400 hover:bg-indigo-400 hover:text-white px-8 py-4 text-lg"
+                className="border-2 border-gray-400 text-gray-400 hover:bg-gray-400 hover:text-white px-8 py-4 text-lg"
                 onClick={() => window.open('https://github.com/johndoe', '_blank')}
               >
                 <Github className="mr-2 h-5 w-5" />
