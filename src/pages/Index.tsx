@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import ParticlesBackground from '@/components/ParticlesBackground';
+import MatrixBackground from '@/components/MatrixBackground';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
-import AboutSection from '@/components/AboutSection';
+import InteractiveAboutSection from '@/components/InteractiveAboutSection';
 import SkillsSection from '@/components/SkillsSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ContactSection from '@/components/ContactSection';
@@ -18,7 +18,7 @@ const Index = () => {
 
   const sections = [
     { id: 'hero', component: HeroSection, title: 'Home' },
-    { id: 'about', component: AboutSection, title: 'About' },
+    { id: 'about', component: InteractiveAboutSection, title: 'About' },
     { id: 'skills', component: SkillsSection, title: 'Skills' },
     { id: 'projects', component: ProjectsSection, title: 'Projects' },
     { id: 'coding', component: CodingProfilesSection, title: 'Coding Profiles' },
@@ -77,7 +77,7 @@ const Index = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"
+            className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"
           />
           <h2 className="text-2xl font-bold text-white">Loading Portfolio...</h2>
         </motion.div>
@@ -87,7 +87,7 @@ const Index = () => {
 
   return (
     <div className="relative">
-      <ParticlesBackground />
+      <MatrixBackground />
       
       <Navigation 
         sections={sections} 
