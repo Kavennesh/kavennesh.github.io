@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MatrixBackground from '@/components/MatrixBackground';
-import TerminalInterface from '@/components/TerminalInterface';
+import AboutSection from '@/components/AboutSection';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +36,7 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
       <MatrixBackground />
-      <TerminalInterface />
+      <AboutSection onNext={() => {}} onPrev={() => {}} isFirst={true} isLast={true} />
     </div>
   );
 };
