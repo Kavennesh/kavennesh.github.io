@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Terminal } from 'lucide-react';
 
@@ -10,39 +10,28 @@ interface AboutSectionProps {
   isLast: boolean;
 }
 
+interface TerminalLine {
+  type: 'command' | 'output' | 'prompt';
+  content: string;
+  timestamp?: string;
+}
+
 const AboutSection: React.FC<AboutSectionProps> = () => {
-  const [currentLine, setCurrentLine] = useState(0);
-  const [currentText, setCurrentText] = useState('');
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState<TerminalLine[]>([
+    { type: 'output', content: 'Welcome to John\'s Terminal Interface' },
+    { type: 'output', content: 'Type "help" to see available commands' },
+    { type: 'prompt', content: '' }
+  ]);
   const [showCursor, setShowCursor] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
-  const terminalLines = [
-    { command: 'whoami', output: 'John Doe - Full Stack Developer' },
-    { command: 'cat experience.txt', output: '5+ years building digital solutions' },
-    { command: 'ls skills/', output: 'React  TypeScript  Node.js  Python  UI/UX' },
-    { command: 'cat passion.txt', output: 'Creating meaningful user experiences' },
-    { command: 'echo $MISSION', output: 'Solving problems through clean code & design' },
-    { command: 'cat values.txt', output: 'Passion • Purpose • Performance' }
-  ];
-
-  useEffect(() => {
-    if (currentLine < terminalLines.length) {
-      const line = terminalLines[currentLine];
-      const fullText = `$ ${line.command}\n${line.output}`;
-      
-      if (currentText.length < fullText.length) {
-        const timer = setTimeout(() => {
-          setCurrentText(fullText.slice(0, currentText.length + 1));
-        }, 50);
-        return () => clearTimeout(timer);
-      } else {
-        const timer = setTimeout(() => {
-          setCurrentLine(currentLine + 1);
-          setCurrentText('');
-        }, 1000);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [currentText, currentLine]);
+  const commands = {
+    whoami: 'John Doe - Full Stack Developer\n\n5+ years building digital solutions\nPassionate about creating meaningful user experiences\nSpecializing in React, TypeScript, Node.js, and Python\n\nMission: Solving problems through clean code & design\nValues: Passion • Purpose • Performance',
+    help: 'Available commands:\n  whoami    - Display about information\n  clear     - Clear terminal screen\n  help      - Show this help message',
+    clear: 'CLEAR_COMMAND'
+  };
 
   useEffect(() => {
     const cursorTimer = setInterval(() => {
@@ -50,6 +39,66 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     }, 500);
     return () => clearInterval(cursorTimer);
   }, []);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const handleCommand = (cmd: string) => {
+    const trimmedCmd = cmd.trim().toLowerCase();
+    const newHistory = [...history];
+    
+    // Add the command to history
+    newHistory[newHistory.length - 1] = { 
+      type: 'command', 
+      content: `$ ${cmd}` 
+    };
+
+    if (trimmedCmd === 'clear') {
+      setHistory([
+        { type: 'output', content: 'Welcome to John\'s Terminal Interface' },
+        { type: 'output', content: 'Type "help" to see available commands' },
+        { type: 'prompt', content: '' }
+      ]);
+    } else if (commands[trimmedCmd as keyof typeof commands]) {
+      const output = commands[trimmedCmd as keyof typeof commands];
+      newHistory.push({ type: 'output', content: output });
+      newHistory.push({ type: 'prompt', content: '' });
+      setHistory(newHistory);
+    } else if (trimmedCmd !== '') {
+      newHistory.push({ 
+        type: 'output', 
+        content: `Command not found: ${cmd}\nType "help" for available commands` 
+      });
+      newHistory.push({ type: 'prompt', content: '' });
+      setHistory(newHistory);
+    } else {
+      newHistory.push({ type: 'prompt', content: '' });
+      setHistory(newHistory);
+    }
+    
+    setInput('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleCommand(input);
+    }
+  };
+
+  const handleTerminalClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative z-10 px-4 py-20">
@@ -85,39 +134,38 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           </div>
 
           {/* Terminal Content */}
-          <div className="p-6 h-96 overflow-hidden">
+          <div 
+            ref={terminalRef}
+            className="p-6 h-96 overflow-y-auto cursor-text"
+            onClick={handleTerminalClick}
+          >
             <div className="font-mono text-sm space-y-2">
-              {/* Completed lines */}
-              {terminalLines.slice(0, currentLine).map((line, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="text-gray-400">
-                    <span className="text-gray-500">$ </span>
-                    {line.command}
-                  </div>
-                  <div className="text-gray-300 ml-2">{line.output}</div>
+              {history.map((line, index) => (
+                <div key={index}>
+                  {line.type === 'command' && (
+                    <div className="text-green-400">{line.content}</div>
+                  )}
+                  {line.type === 'output' && (
+                    <div className="text-gray-300 whitespace-pre-line">{line.content}</div>
+                  )}
+                  {line.type === 'prompt' && index === history.length - 1 && (
+                    <div className="flex items-center text-green-400">
+                      <span className="text-gray-500">$ </span>
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        className="bg-transparent border-none outline-none text-green-400 flex-1 font-mono caret-green-400"
+                        autoComplete="off"
+                        spellCheck="false"
+                      />
+                      {showCursor && <span className="bg-green-400 text-gray-900 ml-1">_</span>}
+                    </div>
+                  )}
                 </div>
               ))}
-              
-              {/* Current typing line */}
-              {currentLine < terminalLines.length && (
-                <div className="space-y-1">
-                  <div className="text-gray-400">
-                    {currentText}
-                    {showCursor && <span className="bg-gray-400 text-gray-900">_</span>}
-                  </div>
-                </div>
-              )}
-
-              {/* Completed state */}
-              {currentLine >= terminalLines.length && (
-                <div className="mt-4">
-                  <div className="text-gray-400">
-                    <span className="text-gray-500">$ </span>
-                    <span className="animate-pulse">ready_for_collaboration</span>
-                    {showCursor && <span className="bg-gray-400 text-gray-900 ml-1">_</span>}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </motion.div>
