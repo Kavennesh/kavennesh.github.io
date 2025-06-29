@@ -12,12 +12,12 @@ interface SkillsSectionProps {
 
 const SkillsSection: React.FC<SkillsSectionProps> = () => {
   const skills = [
-    { name: 'JavaScript/TypeScript', level: 95, icon: Code, color: 'from-yellow-500 to-orange-500' },
-    { name: 'React/Next.js', level: 90, icon: Globe, color: 'from-blue-500 to-cyan-500' },
-    { name: 'Node.js/Express', level: 85, icon: Database, color: 'from-green-500 to-emerald-500' },
-    { name: 'UI/UX Design', level: 88, icon: Palette, color: 'from-purple-500 to-pink-500' },
-    { name: 'Mobile Development', level: 80, icon: Smartphone, color: 'from-indigo-500 to-purple-500' },
-    { name: 'Performance Optimization', level: 87, icon: Zap, color: 'from-red-500 to-pink-500' }
+    { name: 'JavaScript/TypeScript', level: 95, icon: Code, color: 'from-gray-600 to-gray-800' },
+    { name: 'React/Next.js', level: 90, icon: Globe, color: 'from-gray-500 to-gray-700' },
+    { name: 'Node.js/Express', level: 85, icon: Database, color: 'from-gray-700 to-gray-900' },
+    { name: 'UI/UX Design', level: 88, icon: Palette, color: 'from-gray-400 to-gray-600' },
+    { name: 'Mobile Development', level: 80, icon: Smartphone, color: 'from-gray-800 to-black' },
+    { name: 'Performance Optimization', level: 87, icon: Zap, color: 'from-gray-600 to-gray-800' }
   ];
 
   const softSkills = [
@@ -38,7 +38,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent">
             My Skills
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -70,7 +70,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-white font-semibold">{skill.name}</span>
-                        <span className="text-purple-400">{skill.level}%</span>
+                        <span className="text-gray-400">{skill.level}%</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <motion.div
@@ -103,7 +103,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
                   transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
                   className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center hover:bg-white/10 transition-all duration-300 group"
                 >
-                  <span className="text-white font-medium group-hover:text-purple-400 transition-colors duration-300">
+                  <span className="text-white font-medium group-hover:text-gray-300 transition-colors duration-300">
                     {skill}
                   </span>
                 </motion.div>
@@ -114,7 +114,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="mt-12 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-8 border border-purple-500/30"
+              className="mt-12 bg-gradient-to-r from-gray-800/30 to-black/30 rounded-2xl p-8 border border-gray-600/30"
             >
               <h4 className="text-2xl font-bold text-white mb-4">Always Learning</h4>
               <p className="text-gray-300 leading-relaxed">

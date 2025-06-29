@@ -60,7 +60,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent">
             About Me
           </h2>
         </motion.div>
@@ -90,8 +90,8 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
               {/* Completed lines */}
               {terminalLines.slice(0, currentLine).map((line, index) => (
                 <div key={index} className="space-y-1">
-                  <div className="text-green-400">
-                    <span className="text-gray-400">$ </span>
+                  <div className="text-gray-400">
+                    <span className="text-gray-500">$ </span>
                     {line.command}
                   </div>
                   <div className="text-gray-300 ml-2">{line.output}</div>
@@ -101,9 +101,9 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
               {/* Current typing line */}
               {currentLine < terminalLines.length && (
                 <div className="space-y-1">
-                  <div className="text-green-400">
+                  <div className="text-gray-400">
                     {currentText}
-                    {showCursor && <span className="bg-green-400 text-gray-900">_</span>}
+                    {showCursor && <span className="bg-gray-400 text-gray-900">_</span>}
                   </div>
                 </div>
               )}
@@ -111,10 +111,10 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
               {/* Completed state */}
               {currentLine >= terminalLines.length && (
                 <div className="mt-4">
-                  <div className="text-green-400">
-                    <span className="text-gray-400">$ </span>
+                  <div className="text-gray-400">
+                    <span className="text-gray-500">$ </span>
                     <span className="animate-pulse">ready_for_collaboration</span>
-                    {showCursor && <span className="bg-green-400 text-gray-900 ml-1">_</span>}
+                    {showCursor && <span className="bg-gray-400 text-gray-900 ml-1">_</span>}
                   </div>
                 </div>
               )}
@@ -136,8 +136,8 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           ].map((stat, index) => (
             <div key={stat.label} className="text-center">
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-                <div className="text-3xl font-bold text-green-400 mb-2">{stat.value}</div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
+                <div className="text-3xl font-bold text-gray-400 mb-2">{stat.value}</div>
+                <div className="text-gray-500 text-sm">{stat.label}</div>
               </div>
             </div>
           ))}

@@ -26,8 +26,8 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       },
       url: 'https://leetcode.com/johndoe', 
       icon: Code,
-      gradient: 'from-orange-500 to-yellow-500',
-      bgColor: 'bg-orange-500/10'
+      gradient: 'from-gray-600 to-gray-800',
+      bgColor: 'bg-gray-600/10'
     },
     {
       id: 2,
@@ -41,8 +41,8 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       },
       url: 'https://hackerrank.com/johndoe',
       icon: Trophy,
-      gradient: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-500/10'
+      gradient: 'from-gray-500 to-gray-700',
+      bgColor: 'bg-gray-500/10'
     },
     {
       id: 3,
@@ -56,8 +56,8 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       },
       url: 'https://codechef.com/users/johndoe',
       icon: Award,
-      gradient: 'from-blue-500 to-purple-500',
-      bgColor: 'bg-blue-500/10'
+      gradient: 'from-gray-700 to-gray-900',
+      bgColor: 'bg-gray-700/10'
     },
     {
       id: 4,
@@ -71,8 +71,8 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       },
       url: 'https://codeforces.com/profile/johndoe',
       icon: Star,
-      gradient: 'from-red-500 to-pink-500',
-      bgColor: 'bg-red-500/10'
+      gradient: 'from-gray-800 to-black',
+      bgColor: 'bg-gray-800/10'
     }
   ];
 
@@ -81,25 +81,25 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       title: 'Top 5% Global Ranking',
       description: 'LeetCode Weekly Contest',
       icon: Trophy,
-      color: 'text-yellow-400'
+      color: 'text-gray-400'
     },
     {
       title: 'Problem Setter',
       description: 'Created 15+ contest problems',
       icon: Code,
-      color: 'text-green-400'
+      color: 'text-gray-300'
     },
     {
       title: '500+ Day Streak',
       description: 'Consistent daily practice',
       icon: Award,
-      color: 'text-purple-400'
+      color: 'text-gray-500'
     },
     {
       title: 'Mentor & Tutor',
       description: 'Helped 100+ students',
       icon: Star,
-      color: 'text-blue-400'
+      color: 'text-gray-400'
     }
   ];
 
@@ -112,7 +112,7 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent">
             Coding Profiles
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -217,12 +217,12 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
           transition={{ duration: 0.8, delay: 1.2 }}
           className="text-center mt-16"
         >
-          <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-8 border border-yellow-500/30">
+          <div className="bg-gradient-to-r from-gray-800/30 to-black/30 rounded-2xl p-8 border border-gray-600/30">
             <h3 className="text-2xl font-bold text-white mb-4">Let's Code Together!</h3>
             <p className="text-gray-300 mb-6">
               Interested in competitive programming or algorithm discussions? Feel free to connect with me on any platform.
             </p>
-            <Button className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-8 py-3">
+            <Button className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-3">
               Connect on LeetCode
               <ExternalLink className="ml-2 h-4 w-4" />
             </Button>

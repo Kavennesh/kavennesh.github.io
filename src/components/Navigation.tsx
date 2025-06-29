@@ -42,7 +42,7 @@ const Navigation: React.FC<NavigationProps> = ({ sections, currentSection, onSec
                 onClick={() => handleSectionClick(index)}
                 className={`px-4 py-2 rounded-full transition-all duration-300 ${
                   index === currentSection
-                    ? 'bg-purple-500 text-white shadow-lg'
+                    ? 'bg-gray-700 text-white shadow-lg'
                     : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -70,7 +70,7 @@ const Navigation: React.FC<NavigationProps> = ({ sections, currentSection, onSec
                     onClick={() => handleSectionClick(index)}
                     className={`px-4 py-2 rounded-xl transition-all duration-300 text-left ${
                       index === currentSection
-                        ? 'bg-purple-500 text-white shadow-lg'
+                        ? 'bg-gray-700 text-white shadow-lg'
                         : 'text-white/70 hover:text-white hover:bg-white/10'
                     }`}
                   >

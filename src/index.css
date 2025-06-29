@@ -100,8 +100,9 @@
 
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
     min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
@@ -120,14 +121,14 @@
     border-color: transparent;
   }
   51%, 100% {
-    border-color: #8b5cf6;
+    border-color: #6b7280;
   }
 }
 
 .typing-animation {
   display: inline-block;
   overflow: hidden;
-  border-right: 2px solid #8b5cf6;
+  border-right: 2px solid #6b7280;
   white-space: nowrap;
   animation: typing 3s steps(40, end), blink 1s infinite;
 }
@@ -138,23 +139,23 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(107, 114, 128, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: rgba(107, 114, 128, 0.7);
 }
 
 /* Glass morphism effect */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Particle container */
