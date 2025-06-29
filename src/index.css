@@ -118,10 +118,10 @@
 
 @keyframes blink {
   0%, 50% {
-    opacity: 1;
+    border-color: transparent;
   }
   51%, 100% {
-    opacity: 0;
+    border-color: #6b7280;
   }
 }
 
