@@ -47,7 +47,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
     // Create a dummy PDF download
     const link = document.createElement('a');
     link.href = '/resume.pdf'; // You would replace this with actual resume file
-    link.download = 'John_Doe_Resume.pdf';
+    link.download = 'Kavennesh_Resume.pdf';
     link.click();
   };
 
@@ -65,7 +65,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            John Doe
+            Kavennesh
           </motion.h1>
           
           <motion.div

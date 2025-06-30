@@ -18,7 +18,7 @@ interface TerminalLine {
 const AboutSection: React.FC<AboutSectionProps> = () => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<TerminalLine[]>([
-    { type: 'output', content: 'Welcome to John\'s Terminal Interface' },
+    { type: 'output', content: 'Welcome to Kavin\'s Terminal Interface' },
     { type: 'output', content: 'Type "help" to see available commands' },
     { type: 'prompt', content: '' }
   ]);
@@ -28,7 +28,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
   const terminalRef = useRef<HTMLDivElement>(null);
 
   const commands = {
-    whoami: 'John Doe - Full Stack Developer\n\n5+ years building digital solutions\nPassionate about creating meaningful user experiences\nSpecializing in React, TypeScript, Node.js, and Python\n\nMission: Solving problems through clean code & design\nValues: Passion • Purpose • Performance',
+    whoami: 'Kavennesh - Full time Cyber Security student@ FIU\n\nSpecializing in Red Teaming • Network Security • Threat Detection • Incident Response • Ethical Hacking \n\nMission: Safeguarding systems through proactive defense, adversarial thinking, and smart strategy \nValues: Vigilance • Integrity • Resilience',
     help: 'Available commands:\n  whoami    - Display about information\n  clear     - Clear terminal screen\n  help      - Show this help message',
     clear: 'CLEAR_COMMAND'
   };
@@ -72,7 +72,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
 
     if (trimmedCmd === 'clear') {
       setHistory([
-        { type: 'output', content: 'Welcome to John\'s Terminal Interface' },
+        { type: 'output', content: 'Welcome to Kavin\'s Terminal Interface' },
         { type: 'output', content: 'Type "help" to see available commands' },
         { type: 'prompt', content: '' }
       ]);
@@ -146,7 +146,7 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
               </div>
               <div className="flex items-center gap-2 ml-4">
                 <Terminal className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-400 text-sm">john@portfolio:~</span>
+                <span className="text-gray-400 text-sm">kavin@portfolio:~</span>
               </div>
             </div>
 
@@ -196,8 +196,8 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
           className="mt-12 grid md:grid-cols-3 gap-6"
         >
           {[
-            { label: 'Years Experience', value: '5+' },
-            { label: 'Projects Completed', value: '50+' },
+            { label: 'Years Experience', value: '1+' },
+            { label: 'CTF Challenges', value: '10+' },
             { label: 'Coffee Consumed', value: '∞' }
           ].map((stat, index) => (
             <div key={stat.label} className="text-center">

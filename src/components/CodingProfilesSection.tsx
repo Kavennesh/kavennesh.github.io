@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { cubicBezier, motion } from 'framer-motion';
 import { ExternalLink, Trophy, Star, Code, Award } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,23 +16,23 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
   const profiles = [
     {
       id: 1,
-      name: 'LeetCode',
-      username: '@johndoe',
-      description: 'Algorithm and data structure problems',
+      name: 'Tryhackme',
+      username: '@kavennesh',
+      description: 'Top 4% in India Region',
       stats: {
-        solved: '850+',
-        rating: '2150',
-        rank: 'Expert'
+        solved: '100+ Rooms',
+        rating: '51377',
+        rank: 'Wizard'
       },
-      url: 'https://leetcode.com/johndoe', 
-      icon: Code,
+      url: 'https://tryhackme.com/p/kavennesh', 
+      icon: Trophy,
       gradient: 'from-gray-600 to-gray-800',
       bgColor: 'bg-gray-600/10'
     },
     {
       id: 2,
-      name: 'HackerRank',
-      username: '@johndoe',
+      name: 'HackTheBox',
+      username: '@Kavennesh',
       description: 'Programming challenges and competitions',
       stats: {
         solved: '200+',
@@ -78,26 +78,26 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
 
   const achievements = [
     {
-      title: 'Top 5% Global Ranking',
-      description: 'LeetCode Weekly Contest',
+      title: 'Top 3 in Weekly league',
+      description: 'Regular Participation in weekly challenge',
       icon: Trophy,
       color: 'text-gray-400'
     },
     {
-      title: 'Problem Setter',
-      description: 'Created 15+ contest problems',
+      title: 'Active CTF player',
+      description: 'Participated 5+ CTF competition',
       icon: Code,
       color: 'text-gray-300'
     },
     {
-      title: '500+ Day Streak',
-      description: 'Consistent daily practice',
+      title: '30+ Day Streak',
+      description: 'Consistent daily practice in Tryhackme',
       icon: Award,
       color: 'text-gray-500'
     },
     {
-      title: 'Mentor & Tutor',
-      description: 'Helped 100+ students',
+      title: 'HomeLab Enthusiastic',
+      description: 'Deployed my own homelab for Learning new things in a private environment',
       icon: Star,
       color: 'text-gray-400'
     }
