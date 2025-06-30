@@ -17,10 +17,10 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
     {
       id: 1,
       name: 'GitHub',
-      username: '@johndoe',
+      username: '@Kavennesh',
       description: 'Open source projects and code repositories',
-      followers: '2.5K',
-      url: 'https://github.com/johndoe',
+      followers: '100',
+      url: 'https://github.com/Kavennesh',
       icon: Github,
       gradient: 'from-gray-700 to-gray-900',
       hoverColor: 'hover:text-gray-300'
@@ -28,36 +28,14 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
     {
       id: 2,
       name: 'LinkedIn',
-      username: '@johndoe',
+      username: '@kavenneshbv',
       description: 'Professional network and career updates',
-      followers: '5.2K',
-      url: 'https://linkedin.com/in/johndoe',
+      followers: '500',
+      url: 'https://www.linkedin.com/in/kavenneshbv/',
       icon: Linkedin,
       gradient: 'from-blue-600 to-blue-800',
       hoverColor: 'hover:text-blue-400'
     },
-    {
-      id: 3,
-      name: 'Instagram',
-      username: '@johndoe',
-      description: 'Behind the scenes and daily life',
-      followers: '1.8K',
-      url: 'https://instagram.com/johndoe',
-      icon: Instagram,
-      gradient: 'from-pink-500 to-purple-600',
-      hoverColor: 'hover:text-pink-400'
-    },
-    {
-      id: 4,
-      name: 'Twitter',
-      username: '@johndoe',
-      description: 'Tech insights and thoughts',
-      followers: '3.1K',
-      url: 'https://twitter.com/johndoe',
-      icon: Twitter,
-      gradient: 'from-blue-400 to-blue-600',
-      hoverColor: 'hover:text-blue-300'
-    }
   ];
 
   const quickActions = [
@@ -204,7 +182,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
             >
               <Button 
                 className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-4 text-lg"
-                onClick={() => window.open('mailto:john.doe@email.com')}
+                onClick={() => window.open('mailto:kavenneshsec@gmail.com')}
               >
                 <Mail className="mr-2 h-5 w-5" />
                 Get In Touch
@@ -212,7 +190,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
               <Button 
                 variant="outline"
                 className="border-2 border-gray-400 text-gray-400 hover:bg-gray-400 hover:text-white px-8 py-4 text-lg"
-                onClick={() => window.open('https://github.com/johndoe', '_blank')}
+                onClick={() => window.open('https://github.com/Kavennesh', '_blank')}
               >
                 <Github className="mr-2 h-5 w-5" />
                 Follow My Work

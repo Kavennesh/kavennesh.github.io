@@ -17,7 +17,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(150);
 
-  const words = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Creative Coder'];
+  const words = ['Cyber Security Enthusiastic', 'Red Teaming', 'CTF Player', 'Gamer', ''];
 
   useEffect(() => {
     const handleTyping = () => {
@@ -32,7 +32,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
       }
 
       if (!isDeleting && currentText === currentWord) {
-        setTimeout(() => setIsDeleting(true), 2000);
+        setTimeout(() => setIsDeleting(true), 20);
       } else if (isDeleting && currentText === '') {
         setIsDeleting(false);
         setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
@@ -86,8 +86,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNext }) => {
             transition={{ duration: 0.8, delay: 1.2 }}
             className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed"
           >
-            Crafting beautiful, functional, and user-centered digital experiences. 
-            Passionate about turning complex problems into simple, elegant solutions.
+          Building secure, intelligent, and resilient digital environments.
+
+          Passionate about offensive and defensive security—from identifying system vulnerabilities to implementing proactive defense strategies.
+
+          Skilled in penetration testing, threat detection, and network security. I aim to turn complex attack surfaces into manageable and well-protected systems.
+
+          Let’s connect and collaborate on securing the future of digital!
           </motion.p>
 
           <motion.div

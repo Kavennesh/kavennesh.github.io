@@ -3,6 +3,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Code, Palette, Database, Globe, Smartphone, Zap } from 'lucide-react';
 
+
+
 interface SkillsSectionProps {
   onNext: () => void;
   onPrev: () => void;
@@ -12,12 +14,12 @@ interface SkillsSectionProps {
 
 const SkillsSection: React.FC<SkillsSectionProps> = () => {
   const skills = [
-    { name: 'JavaScript/TypeScript', level: 95, icon: Code, color: 'from-gray-600 to-gray-800' },
-    { name: 'React/Next.js', level: 90, icon: Globe, color: 'from-gray-500 to-gray-700' },
-    { name: 'Node.js/Express', level: 85, icon: Database, color: 'from-gray-700 to-gray-900' },
-    { name: 'UI/UX Design', level: 88, icon: Palette, color: 'from-gray-400 to-gray-600' },
-    { name: 'Mobile Development', level: 80, icon: Smartphone, color: 'from-gray-800 to-black' },
-    { name: 'Performance Optimization', level: 87, icon: Zap, color: 'from-gray-600 to-gray-800' }
+    { name: 'Python', level: 90, icon: Code, color: 'from-gray-600 to-gray-800' },
+    { name: 'Network Security', level: 90, icon: Globe, color: 'from-gray-500 to-gray-700' },
+    { name: 'Penetration Testing', level: 60, icon: Database, color: 'from-gray-700 to-gray-900' },
+    { name: 'Linux', level: 90, icon: Palette, color: 'from-gray-400 to-gray-600' },
+    { name: 'Bash scripting', level: 60, icon: Smartphone, color: 'from-gray-800 to-black' },
+    { name: 'Metasploit Framework', level: 87, icon: Zap, color: 'from-gray-600 to-gray-800' }
   ];
 
   const softSkills = [

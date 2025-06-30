@@ -32,19 +32,13 @@ const ContactSection: React.FC<ContactSectionProps> = () => {
     {
       icon: Mail,
       title: 'Email',
-      value: 'john.doe@email.com',
-      link: 'mailto:john.doe@email.com'
-    },
-    {
-      icon: Phone,
-      title: 'Phone',
-      value: '+1 (555) 123-4567',
-      link: 'tel:+15551234567'
+      value: 'kavenneshsec@gmail.com',
+      link: 'mailto:kavenneshsec@gmail.com'
     },
     {
       icon: MapPin,
       title: 'Location',
-      value: 'San Francisco, CA',
+      value: 'Miami, FL',
       link: null
     }
   ];
@@ -152,8 +146,8 @@ const ContactSection: React.FC<ContactSectionProps> = () => {
             <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
               <h3 className="text-2xl font-bold text-white mb-6">Get In Touch</h3>
               <p className="text-gray-300 leading-relaxed mb-8">
-                I'm always open to discussing new opportunities, creative projects, 
-                or just having a friendly chat about technology and design.
+                I'm always open to exploring new opportunities, collaborating on security-focused projects,
+                 or having insightful conversations about cybersecurity, ethical hacking, and digital defense.
               </p>
               
               <div className="space-y-6">
@@ -197,9 +191,15 @@ const ContactSection: React.FC<ContactSectionProps> = () => {
               <p className="text-gray-300 mb-6">
                 Let's turn your ideas into reality. I'm here to help you build something amazing.
               </p>
-              <Button className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-3">
-                Hire Me Now
-              </Button>
+              <a
+                href="https://www.linkedin.com/in/kavenneshbv/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-3">
+                  Hire Me Now
+                </Button>
+              </a>
             </motion.div>
           </motion.div>
         </div>

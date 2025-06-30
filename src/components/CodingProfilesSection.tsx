@@ -35,45 +35,15 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       username: '@Kavennesh',
       description: 'Programming challenges and competitions',
       stats: {
-        solved: '200+',
-        rating: '1950',
-        rank: '5 Star'
+        solved: '20+ Rooms',
+        rating: ' Bronze',
+        rank: '#898 Global'
       },
-      url: 'https://hackerrank.com/johndoe',
+      url: 'https://app.hackthebox.com/profile/overview/kavennesh',
       icon: Trophy,
       gradient: 'from-gray-500 to-gray-700',
       bgColor: 'bg-gray-500/10'
     },
-    {
-      id: 3,
-      name: 'CodeChef',
-      username: '@johndoe',
-      description: 'Competitive programming platform',
-      stats: {
-        solved: '150+',
-        rating: '1875',
-        rank: '4 Star'
-      },
-      url: 'https://codechef.com/users/johndoe',
-      icon: Award,
-      gradient: 'from-gray-700 to-gray-900',
-      bgColor: 'bg-gray-700/10'
-    },
-    {
-      id: 4,
-      name: 'Codeforces',
-      username: '@johndoe',
-      description: 'Competitive programming contests',
-      stats: {
-        solved: '300+',
-        rating: '1650',
-        rank: 'Specialist'
-      },
-      url: 'https://codeforces.com/profile/johndoe',
-      icon: Star,
-      gradient: 'from-gray-800 to-black',
-      bgColor: 'bg-gray-800/10'
-    }
   ];
 
   const achievements = [
