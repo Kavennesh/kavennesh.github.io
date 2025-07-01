@@ -187,16 +187,28 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
           transition={{ duration: 0.8, delay: 1.2 }}
           className="text-center mt-16"
         >
-          <div className="bg-gradient-to-r from-gray-800/30 to-black/30 rounded-2xl p-8 border border-gray-600/30">
-            <h3 className="text-2xl font-bold text-white mb-4">Let's Code Together!</h3>
-            <p className="text-gray-300 mb-6">
-              Interested in competitive programming or algorithm discussions? Feel free to connect with me on any platform.
-            </p>
-            <Button className="bg-gradient-to-r from-gray-700 to-black hover:from-gray-800 hover:to-gray-900 text-white px-8 py-3">
-              Connect on LeetCode
+        <div className="bg-gradient-to-r from-gray-800/30 to-black/30 rounded-2xl p-8 border border-gray-600/30">
+          <h3 className="text-2xl font-bold text-white mb-4">Let's Hack Together!</h3>
+          <p className="text-gray-300 mb-6">
+            Interested in Capture The Flag (CTF) challenges or cybersecurity problem-solving? Feel free to connect with me on TryHackMe or LinkedIn.
+          </p>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a href="https://tryhackme.com/p/kavennesh" target="_blank" rel="noopener noreferrer">
+              <Button className="bg-gradient-to-r from-green-700 to-emerald-800 hover:from-green-800 hover:to-emerald-900 text-white px-8 py-3">
+              Connect on TryHackMe
               <ExternalLink className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+              </Button>
+           </a>
+
+            <a href="https://www.linkedin.com/in/kavenneshbv" target="_blank" rel="noopener noreferrer">
+              <Button className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-8 py-3">
+              Connect on LinkedIn
+              <ExternalLink className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
+         </div>
+        </div>
         </motion.div>
       </div>
     </div>
