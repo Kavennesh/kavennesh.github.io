@@ -23,12 +23,14 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
   ];
 
   const softSkills = [
-    'Problem Solving',
-    'Team Leadership',
-    'Communication',
-    'Project Management',
-    'Mentoring',
-    'Adaptability'
+  'Python',
+  'Wireshark',
+  'Metasploit Framework',
+  'Firewall Configuration',
+  'Burp Suite',
+  'Analytical Thinking',
+  'Incident Response',
+  'Effective Communication'
   ];
 
   return (

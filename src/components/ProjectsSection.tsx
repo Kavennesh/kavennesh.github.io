@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, Smartphone, Globe, Zap } from 'lucide-react';
+import { ExternalLink,Github,Smartphone, Globe,Zap,ShieldCheck,ImagePlus,TerminalSquare} from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -18,38 +17,35 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
   const projects = [
     {
       id: 1,
-      title: 'E-Commerce Platform',
-      description: 'Full-stack e-commerce solution with React, Node.js, and MongoDB',
-      longDescription: 'A comprehensive e-commerce platform featuring user authentication, product catalog, shopping cart, payment integration, and admin dashboard. Built with modern technologies for optimal performance and user experience.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
-      technologies: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-      liveUrl: 'https://example.com',
-      githubUrl: 'https://github.com/example',
-      icon: Globe,
-      gradient: 'from-blue-500 to-purple-500'
+      title: 'VPN Detection & Blocking System',
+      description: 'Detects and blocks VPN usage through packet analysis and known IP mapping.',
+      longDescription:'A network security solution designed to detect and block unauthorized VPN activity using packet sniffing and IP address pattern matching. The system captures source and destination IPs and compares them against known VPN ranges to flag suspicious connections. This enhances organizational security by preventing policy violations, malware exposure, and data exfiltration through encrypted VPN tunnels.',
+      image: '/vpn.png',
+      technologies: ['Python', 'Scapy', 'Wireshark', 'Packet Sniffing', 'Firewall Rules', 'SSL/TLS Analysis', 'Network Security'],
+      githubUrl: 'https://github.com/Kavennesh/vpn_detector_front',
+      icon: ShieldCheck,
+      gradient: 'from-blue-700 to-cyan-800'
     },
     {
       id: 2,
-      title: 'Mobile Fitness App',
-      description: 'React Native app for tracking workouts and nutrition',
-      longDescription: 'A mobile fitness application that helps users track their workouts, monitor nutrition, set goals, and stay motivated. Features include exercise database, progress tracking, social features, and personalized recommendations.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
-      technologies: ['React Native', 'Firebase', 'Redux', 'Charts'],
-      liveUrl: 'https://example.com',
-      githubUrl: 'https://github.com/example',
-      icon: Smartphone,
+      title: 'Enhance Image Generator',
+      description: 'A deep learning-based tool that enhances low-light or low-quality images using PyTorch and HDR reconstruction techniques.',
+      longDescription:'The Enhanced Image Generator is a Python-based image enhancement system that uses deep learning to improve the quality of low-light or low-contrast images. Leveraging PyTorch and custom-trained models (weights.pth), the system reconstructs high dynamic range (HDR) versions of input images. It processes images using advanced transformations, luminance adjustments, and tone mapping techniques to produce visually richer outputs. This project is ideal for scenarios where clarity, brightness, and detail enhancement are essential — such as photography restoration, scientific imaging, and low-light surveillance.',
+      image: '/enhance.png',
+      technologies: ['Python', 'PyTorch', 'NumPy', 'OpenCV', 'HDR Imaging', 'Image Processing'],
+      githubUrl: 'https://github.com/Kavennesh/Enhanced-image-Generator',
+      icon: ShieldCheck,
       gradient: 'from-green-500 to-emerald-500'
     },
     {
       id: 3,
-      title: 'Real-time Chat App',
-      description: 'WebSocket-based chat application with real-time messaging',
-      longDescription: 'A real-time chat application supporting multiple chat rooms, private messaging, file sharing, and emoji reactions. Built with WebSocket technology for instant communication and smooth user experience.',
-      image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=600&fit=crop',
-      technologies: ['Socket.io', 'Express', 'React', 'PostgreSQL'],
-      liveUrl: 'https://example.com',
-      githubUrl: 'https://github.com/example',
-      icon: Zap,
+      title: 'Personal SSH Server via Ngrok',
+      description: 'A secure SSH server setup using Ngrok on Debian-based systems, providing global access without static IP or port forwarding.',
+      longDescription:'This project enables users to configure a globally accessible SSH server on Debian or Ubuntu machines by tunneling port 22 through Ngrok. The guide walks through the complete setup including OpenSSH installation, user creation, Ngrok configuration, and an optional systemd-based auto-start on boot. This eliminates the need for public IPs or router configurations, providing encrypted remote SSH access via a simple, portable setup. Ideal for homelabs, personal servers, or virtual machines running in restricted network environments.',
+      image: '/ssh.png',
+      technologies: ['Debian/Ubuntu','OpenSSH','Ngrok','Systemd','Shell Scripting','Remote Access'  ],
+      githubUrl: 'https://github.com/Kavennesh/Personal-SSH-Server-via-Ngrok',
+      icon: TerminalSquare,
       gradient: 'from-yellow-500 to-orange-500'
     }
   ];
@@ -94,11 +90,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-white mb-3">{project.title}</h3>
                   <p className="text-gray-300 mb-4 leading-relaxed">{project.description}</p>
-                  
+
                   <div className="flex flex-wrap gap-2 mb-6">
                     {project.technologies.map((tech) => (
                       <span
@@ -119,20 +115,18 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                     >
                       View Details
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-white/20 text-white hover:bg-white/10"
-                    >
-                      <Github className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-white/20 text-white hover:bg-white/10"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-white/20 text-white hover:bg-white/10"
+                      >
+                        <Github className="h-4 w-4" />
+                      </Button>
+                    </a>
+
+                    
                   </div>
                 </CardContent>
               </Card>
@@ -160,7 +154,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                 {(() => {
                   const project = projects.find(p => p.id === selectedProject);
                   if (!project) return null;
-                  
+
                   return (
                     <>
                       <div className="flex justify-between items-start mb-6">
@@ -174,17 +168,17 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                           ×
                         </Button>
                       </div>
-                      
+
                       <img
                         src={project.image}
                         alt={project.title}
                         className="w-full h-64 object-cover rounded-xl mb-6"
                       />
-                      
+
                       <p className="text-gray-300 mb-6 leading-relaxed">
                         {project.longDescription}
                       </p>
-                      
+
                       <div className="flex flex-wrap gap-2 mb-6">
                         {project.technologies.map((tech) => (
                           <span
@@ -195,16 +189,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = () => {
                           </span>
                         ))}
                       </div>
-                      
+
                       <div className="flex gap-4">
-                        <Button className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          Live Demo
-                        </Button>
-                        <Button variant="outline" className="flex-1 border-white/20 text-white">
-                          <Github className="mr-2 h-4 w-4" />
-                          Source Code
-                        </Button>
+                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+                          <Button variant="outline" className="w-full border-white/20 text-white">
+                            <Github className="mr-2 h-4 w-4" />
+                            Source Code
+                          </Button>
+                        </a>
                       </div>
                     </>
                   );
