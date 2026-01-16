@@ -19,7 +19,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
       name: 'GitHub',
       username: '@Kavennesh',
       description: 'Open source projects and code repositories',
-      followers: '100',
+      followers: '10',
       url: 'https://github.com/Kavennesh',
       icon: Github,
       gradient: 'from-gray-700 to-gray-900',
@@ -30,7 +30,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
       name: 'LinkedIn',
       username: '@kavenneshbv',
       description: 'Professional network and career updates',
-      followers: '500',
+      followers: '3100+',
       url: 'https://www.linkedin.com/in/kavenneshbv/',
       icon: Linkedin,
       gradient: 'from-blue-600 to-blue-800',
@@ -43,7 +43,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = () => {
       title: 'Send Email',
       description: 'Get in touch directly',
       icon: Mail,
-      action: () => window.open('mailto:john.doe@email.com'),
+      action: () => window.open('mailto:kavenneshsec@gmail.com'),
       gradient: 'from-red-500 to-pink-500'
     },
     {

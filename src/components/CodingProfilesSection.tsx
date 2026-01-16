@@ -18,7 +18,7 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       id: 1,
       name: 'Tryhackme',
       username: '@kavennesh',
-      description: 'Top 4% in India Region',
+      description: 'Top 2% in India Region',
       stats: {
         solved: '100+ Rooms',
         rating: '51377',
@@ -60,7 +60,7 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       color: 'text-gray-300'
     },
     {
-      title: '30+ Day Streak',
+      title: '80+ Day Streak',
       description: 'Consistent daily practice in Tryhackme',
       icon: Award,
       color: 'text-gray-500'
@@ -74,7 +74,7 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative z-10 px-4 py-20">
+    <div className="min-h-screen flex items-center justify-center relative z-10 px-4 py-20 pt-32">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -82,9 +82,10 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-10 bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent">
             Coding Profiles
           </h2>
+
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             My journey in competitive programming and algorithm solving across various platforms.
           </p>
@@ -113,13 +114,13 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
                       </div>
                     </div>
                     <Button
-                      variant="outline"
                       size="sm"
-                      className="border-white/20 text-white hover:bg-white/10"
+                      className="bg-white/5 backdrop-blur-md border-white/10 text-white hover:bg-purple-500/20 hover:shadow-[0_0_10px_rgba(168,85,247,0.4)] transition-all"
                       onClick={() => window.open(profile.url, '_blank')}
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
+
                   </div>
                   
                   <p className="text-gray-300 mb-6">{profile.description}</p>
