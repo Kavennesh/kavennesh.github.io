@@ -47,16 +47,8 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
   ];
 
   const certifications = [
-    {
-      title: "CNSP – Certified Network Security Practitioner",
-      issuer: "The SecOps Group",
-      year: "2025",
-      credential:
-        "Network security fundamentals, threat analysis, and defensive security concepts",
-      status: "Completed",
-      link: "https://www.linkedin.com/in/kavenneshbv/",
-    },
-    {
+    
+        {
       title: "eJPT – Junior Penetration Tester",
       issuer: "INE / eLearnSecurity",
       year: "2025",
@@ -64,6 +56,25 @@ const SkillsSection: React.FC<SkillsSectionProps> = () => {
       status: "In Progress",
       link: "",
     },
+    {   
+      title: "Certified Cloud Security Practitioner – AWS (CCSP-AWS) - Merit",
+      issuer: "The SecOps Group",
+      year: "2026",
+      credential:
+        "AWS cloud security fundamentals, identity and access management (IAM), cloud threat mitigation, secure cloud architecture, and compliance best practices",
+      status: "Completed",
+      link: "https://www.linkedin.com/in/kavenneshbv/",
+    },
+    {
+      title: "CNSP – Certified Network Security Practitioner - Merit",
+      issuer: "The SecOps Group",
+      year: "2025",
+      credential:
+        "Network security fundamentals, threat analysis, and defensive security concepts",
+      status: "Completed",
+      link: "https://www.linkedin.com/in/kavenneshbv/",
+    },
+
   ];
 
   // ✅ Progress bar animation trigger (on scroll into view)

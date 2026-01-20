@@ -60,7 +60,7 @@ const CodingProfilesSection: React.FC<CodingProfilesSectionProps> = () => {
       color: 'text-gray-300'
     },
     {
-      title: '80+ Day Streak',
+      title: '130+ Day Streak',
       description: 'Consistent daily practice in Tryhackme',
       icon: Award,
       color: 'text-gray-500'
