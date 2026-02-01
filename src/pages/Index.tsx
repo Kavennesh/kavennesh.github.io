@@ -9,6 +9,7 @@ import ContactSection from "@/components/ContactSection";
 import CodingProfilesSection from "@/components/CodingProfilesSection";
 import SocialLinksSection from "@/components/SocialLinksSection";
 import IntroLoader from "@/components/IntroLoader";
+import ExperienceSection from "@/components/ExperienceSection";
 
 const Index = () => {
   const [currentSection, setCurrentSection] = useState(0);
@@ -37,6 +38,7 @@ const Index = () => {
   const sections = [
     { id: "hero", component: HeroSection, title: "Home" },
     { id: "about", component: AboutSection, title: "About" },
+    { id: "experience", component: ExperienceSection, title: "Experience" },
     { id: "skills", component: SkillsSection, title: "Skills" },
     { id: "projects", component: ProjectsSection, title: "Projects" },
     { id: "coding", component: CodingProfilesSection, title: "Coding Profiles" },

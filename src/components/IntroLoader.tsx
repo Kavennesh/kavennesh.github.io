@@ -11,7 +11,7 @@ const tagLine = `"If you wanna crack a system, first understand the system."`;
 export default function IntroLoader({ show, onDone }: IntroLoaderProps) {
   useEffect(() => {
     if (!show) return;
-    const t = setTimeout(onDone, 4000); // ✅ total intro duration (4s)
+    const t = setTimeout(onDone, 5000); // ✅ total intro duration (8s)
     return () => clearTimeout(t);
   }, [show, onDone]);
 

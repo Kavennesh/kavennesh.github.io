@@ -34,6 +34,8 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     help:
       "Available commands:\n  whoami    - Display about information\n  clear     - Clear terminal screen\n  help      - Show this help message",
     clear: "CLEAR_COMMAND",
+    education:
+      "Bachelor of Science in Cyber Security\nFlorida International University (FIU)\nExpected Graduation: May 2025\n\nRelevant Coursework:\n- Network Security\n- Ethical Hacking\n- Digital Forensics\n- Cyber Threat Intelligence",
   };
 
   // blink cursor
