@@ -10,8 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-
+    "deploy": "gh-pages -d dist",
+    "publish": "npm run build && git add . && (git commit -m \"$npm_config_msg\" || echo \"No changes to commit\") && git push origin main && npm run deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
