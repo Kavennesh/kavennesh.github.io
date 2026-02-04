@@ -98,6 +98,22 @@ type SkillItem = {
   size: number;
 };
 
+type TechSkill = {
+  name: string;
+  level: number;
+  icon: string; // emoji or small text icon for the left badge
+};
+
+type CertItem = {
+  title: string;
+  org: string;
+  year: string;
+  status: "In Progress" | "Completed";
+  tone: "warning" | "success";
+  desc: string;
+  link?: string | null;
+};
+
 const SkillsSection: React.FC = () => {
   const [rotY, setRotY] = useState<number>(0);
   const [dragging, setDragging] = useState<boolean>(false);
@@ -107,7 +123,7 @@ const SkillsSection: React.FC = () => {
   const animRef = useRef<number | null>(null);
   const rotRef = useRef<number>(0);
 
-  // ✅ Your icons
+  // ✅ Globe icons
   const skills = useMemo<SkillItem[]>(
     () => [
       { name: "Python", icon: "/Python.png", lat: 10, lon: -90, size: 52 },
@@ -122,6 +138,70 @@ const SkillsSection: React.FC = () => {
       { name: "SQLmap", icon: "/Sqlmap.png", lat: -55, lon: -5, size: 44 },
       { name: "Kali Linux", icon: "/kali_linux.png", lat: 5, lon: 60, size: 46 },
       { name: "Bash", icon: "/bash.png", lat: 35, lon: -140, size: 44 },
+    ],
+    []
+  );
+
+  // ✅ Screenshot-style technical skills (progress cards)
+  const technicalSkills = useMemo<TechSkill[]>(
+    () => [
+      { name: "Python", level: 90, icon: "⟷" },
+      { name: "Network Security", level: 90, icon: "🌐" },
+      { name: "Penetration Testing", level: 60, icon: "🗄️" },
+      { name: "Linux", level: 90, icon: "🧠" },
+      { name: "Bash scripting", level: 60, icon: "📱" },
+    ],
+    []
+  );
+
+  // ✅ Soft skills pills
+  const softSkills = useMemo(
+    () => [
+      "Analytical Thinking",
+      "Problem Solving",
+      "Incident Response Mindset",
+      "Attention to Detail",
+      "Risk Assessment",
+      "Communication Skills",
+      "Team Collaboration",
+      "Adaptability",
+      "Continuous Learning",
+      "Time Management",
+    ],
+    []
+  );
+
+  // ✅ Certifications cards
+  const certifications = useMemo<CertItem[]>(
+    () => [
+      {
+        title: "eJPT – Junior Penetration Tester",
+        org: "INE / eLearnSecurity",
+        year: "2025",
+        status: "In Progress",
+        tone: "warning",
+        desc: "Hands-on penetration testing fundamentals and network exploitation",
+        link: null,
+      },
+      {
+        title: "Certified Cloud Security Practitioner – AWS (CCSP-AWS) – Merit",
+        org: "The SecOps Group",
+        year: "2026",
+        status: "Completed",
+        tone: "success",
+        desc:
+          "AWS cloud security fundamentals, IAM, threat mitigation, secure cloud architecture, and compliance best practices",
+        link: "#",
+      },
+      {
+        title: "CNSP – Certified Network Security Practitioner – Merit",
+        org: "The SecOps Group",
+        year: "2025",
+        status: "Completed",
+        tone: "success",
+        desc: "Network security fundamentals, threat analysis, and defensive security concepts",
+        link: "#",
+      },
     ],
     []
   );
@@ -224,9 +304,7 @@ const SkillsSection: React.FC = () => {
       <div className="max-w-6xl mx-auto w-full relative z-10">
         {/* Heading */}
         <div className="text-center mb-12">
-          <div className="text-xs tracking-[0.35em] uppercase text-white/60 mb-3">
-            TECH STACK
-          </div>
+          <div className="text-xs tracking-[0.35em] uppercase text-white/60 mb-3">TECH STACK</div>
 
           <h2 className="text-5xl md:text-6xl font-bold text-white">
             My{" "}
@@ -273,7 +351,12 @@ const SkillsSection: React.FC = () => {
             {/* Wireframe globe */}
             <svg
               className="absolute pointer-events-none"
-              style={{ top: "50%", left: "50%", transform: "translate(-50%,-50%)", overflow: "visible" }}
+              style={{
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+                overflow: "visible",
+              }}
               width={R * 2}
               height={R * 2}
               viewBox={`${-R} ${-R} ${R * 2} ${R * 2}`}
@@ -384,6 +467,116 @@ const SkillsSection: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        {/* ===== Screenshot Layout (Technical / Soft / Certifications) ===== */}
+        <div className="mt-14 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Technical Skills */}
+          <div>
+            <h3 className="text-3xl font-semibold text-white mb-6">Technical Skills</h3>
+
+            <div className="space-y-5">
+              {technicalSkills.map((s) => (
+                <div
+                  key={s.name}
+                  className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/80">
+                        {s.icon}
+                      </div>
+                      <div className="text-white font-medium">{s.name}</div>
+                    </div>
+
+                    <div className="text-white/70 font-medium">{s.level}%</div>
+                  </div>
+
+                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500"
+                      style={{ width: `${s.level}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Soft Skills + Always Learning */}
+          <div>
+            <h3 className="text-3xl font-semibold text-white mb-6 text-center lg:text-left">
+              Soft Skills
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              {softSkills.map((t) => (
+                <div
+                  key={t}
+                  className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md py-4 px-4 text-center text-white/85"
+                >
+                  {t}
+                </div>
+              ))}
+            </div>
+
+            {/* Always Learning Card */}
+            <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6">
+              <h4 className="text-2xl font-semibold text-white mb-3">Always Learning</h4>
+              <p className="text-white/70 leading-relaxed">
+                Technology evolves rapidly, and I’m committed to staying current with the latest
+                trends, tools, and best practices.
+              </p>
+            </div>
+          </div>
+
+          {/* Certifications */}
+          <div>
+            <h3 className="text-3xl font-semibold text-white mb-6">Certifications</h3>
+
+            <div className="space-y-6">
+              {certifications.map((c) => {
+                const badge =
+                  c.tone === "success"
+                    ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20"
+                    : "bg-amber-500/15 text-amber-300 border-amber-400/20";
+
+                return (
+                  <div
+                    key={c.title}
+                    className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h4 className="text-white text-lg font-semibold leading-snug">{c.title}</h4>
+
+                      <span
+                        className={`shrink-0 px-3 py-1 rounded-full border text-xs font-medium ${badge}`}
+                      >
+                        {c.status}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 text-white/60 text-sm">
+                      {c.org} • {c.year}
+                    </div>
+
+                    <p className="mt-4 text-white/65 text-sm leading-relaxed">{c.desc}</p>
+
+                    {c.link && (
+                      <a
+                        href={c.link}
+                        className="inline-flex items-center gap-2 mt-4 text-sm text-cyan-300 hover:text-cyan-200"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View Certificate →
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

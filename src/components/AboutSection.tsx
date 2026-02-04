@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Terminal } from "lucide-react";
 
@@ -28,15 +28,18 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  const commands: Record<string, string> = {
-    whoami:
-      "Kavennesh - Full time Cyber Security student@ FIU\n\nSpecializing in Red Teaming • Network Security • Threat Detection • Incident Response • Ethical Hacking\n\nMission: Safeguarding systems through proactive defense, adversarial thinking, and smart strategy\nValues: Vigilance • Integrity • Resilience",
-    help:
-      "Available commands:\n  whoami    - Display about information\n  clear     - Clear terminal screen\n  help      - Show this help message",
-    clear: "CLEAR_COMMAND",
-    education:
-      "Bachelor of Science in Cyber Security\nFlorida International University (FIU)\nExpected Graduation: May 2025\n\nRelevant Coursework:\n- Network Security\n- Ethical Hacking\n- Digital Forensics\n- Cyber Threat Intelligence",
-  };
+  const commands = useMemo<Record<string, string>>(
+    () => ({
+      whoami:
+        "Kavennesh - Full time Cyber Security student@ FIU\n\nSpecializing in Red Teaming • Network Security • Threat Detection • Incident Response • Ethical Hacking\n\nMission: Safeguarding systems through proactive defense, adversarial thinking, and smart strategy\nValues: Vigilance • Integrity • Resilience",
+      education:
+        "Bachelor of Science in Cyber Security\nFlorida International University (FIU)\nExpected Graduation: May 2025\n\nRelevant Coursework:\n- Network Security\n- Ethical Hacking\n- Digital Forensics\n- Cyber Threat Intelligence",
+      help:
+        'Available commands:\n  whoami      - Display about information\n  education   - Show education details\n  clear       - Clear terminal screen\n  help        - Show this help message',
+      clear: "CLEAR_COMMAND",
+    }),
+    []
+  );
 
   // blink cursor
   useEffect(() => {
@@ -51,10 +54,10 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     }
   }, [history]);
 
-  // focus on mount
+// focus input whenever history changes (new prompt added)
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  inputRef.current?.focus();
+  }, [history]);
 
   // show terminal animation slightly later
   useEffect(() => {
@@ -70,45 +73,71 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
     ]);
   };
 
-  const handleCommand = (cmd: string) => {
-    const trimmed = cmd.trim();
-    const key = trimmed.toLowerCase();
+  const handleCommand = (rawCmd: string) => {
+    const cmd = rawCmd.trim();
+    const key = cmd.toLowerCase();
 
-    const newHistory = [...history];
+    // Always clear the input immediately for snappy UX
+    setInput("");
 
-    // Replace last prompt with the command
-    newHistory[newHistory.length - 1] = { type: "command", content: `$ ${cmd}` };
+    // Update history based on previous state (IMPORTANT fix)
+    setHistory((prev) => {
+      const next = [...prev];
 
-    if (key === "clear") {
-      resetTerminal();
-      setInput("");
-      return;
-    }
+      // Ensure last line is a prompt (defensive)
+      const last = next[next.length - 1];
+      if (!last || last.type !== "prompt") {
+        next.push({ type: "prompt", content: "" });
+      }
 
-    if (key && commands[key]) {
-      newHistory.push({ type: "output", content: commands[key] });
-      newHistory.push({ type: "prompt", content: "" });
-      setHistory(newHistory);
-    } else if (key) {
-      newHistory.push({
+      // Replace the last prompt with the typed command
+      next[next.length - 1] = { type: "command", content: `$ ${cmd}` };
+
+      // Empty enter -> just show a new prompt
+      if (!key) {
+        next.push({ type: "prompt", content: "" });
+        return next;
+      }
+
+      // Clear
+      if (key === "clear") {
+        return [
+          { type: "output", content: "Welcome to Kavin's Terminal Interface" },
+          { type: "output", content: 'Type "help" to see available commands' },
+          { type: "prompt", content: "" },
+        ];
+      }
+
+      // Known command
+      if (commands[key]) {
+        next.push({ type: "output", content: commands[key] });
+        next.push({ type: "prompt", content: "" }); // ✅ ALWAYS restore prompt
+        return next;
+      }
+
+      // Unknown command
+      next.push({
         type: "output",
         content: `Command not found: ${cmd}\nType "help" for available commands`,
       });
-      newHistory.push({ type: "prompt", content: "" });
-      setHistory(newHistory);
-    } else {
-      newHistory.push({ type: "prompt", content: "" });
-      setHistory(newHistory);
-    }
-
-    setInput("");
+      const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+      e.preventDefault();
+    handleCommand(input);
+  }
+};
+      next.push({ type: "prompt", content: "" }); // ✅ ALWAYS restore prompt
+      return next;
+    });
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleCommand(input);
   };
 
-  const handleTerminalClick = () => inputRef.current?.focus();
+  const handleTerminalClick = () => {
+    inputRef.current?.focus();
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative z-10 px-4 py-20">
@@ -161,10 +190,14 @@ const AboutSection: React.FC<AboutSectionProps> = () => {
               <div className="font-mono text-sm space-y-2">
                 {history.map((line, index) => (
                   <div key={index}>
-                    {line.type === "command" && <div className="text-green-400">{line.content}</div>}
+                    {line.type === "command" && (
+                      <div className="text-green-400">{line.content}</div>
+                    )}
+
                     {line.type === "output" && (
                       <div className="text-gray-300 whitespace-pre-line">{line.content}</div>
                     )}
+
                     {line.type === "prompt" && index === history.length - 1 && (
                       <div className="flex items-center text-green-400">
                         <span className="text-gray-500">$ </span>

@@ -1,20 +1,6 @@
 import React, { useMemo, useRef } from "react";
-import {
-  motion,
-  useInView,
-  useScroll,
-  useSpring,
-  useTransform,
-  type Variants,
-} from "framer-motion";
-import {
-  GraduationCap,
-  Briefcase,
-  ShieldCheck,
-  Calendar,
-  MapPin,
-  Terminal,
-} from "lucide-react";
+import { motion,  useInView,  useScroll,  useSpring,  useTransform,  type Variants,} from "framer-motion";
+import {  GraduationCap,  Briefcase,  ShieldCheck,  Calendar,  MapPin,  Terminal,} from "lucide-react";
 
 /* ================= TYPES ================= */
 
@@ -25,7 +11,7 @@ type Entry = {
   role: string;
   time: string;
   location?: string;
-  points: string[]; // ✅ everything is points
+  points: string[];
   tags?: string[];
   accent: Accent;
 };
@@ -214,8 +200,8 @@ const TimelinePanel = ({
                     )}
                   </div>
 
-                  {/* ✅ ALL CONTENT AS POINTS */}
-                  <ul className="mt-4 space-y-2 text-gray-300 text-sm list-disc list-inside">
+                  {/* ✅ FIXED BULLETS (no list-inside) */}
+                  <ul className="mt-4 space-y-2 text-sm text-gray-300 list-disc pl-5 marker:text-white/50 leading-relaxed">
                     {it.points.map((p) => (
                       <li key={p}>{p}</li>
                     ))}
@@ -292,7 +278,14 @@ const ExperienceSection: React.FC = () => {
           "Helped identify suspicious traffic patterns during threat detection activities.",
           "Performed entry-level vulnerability checks and documented findings for the team.",
         ],
-        tags: ["Penetration Testing", "Vulnerability Exploitation", "Network Reconnaissance", "Attack Surface Mapping", "Adversary Simulation"],        accent: "purple",
+        tags: [
+          "Penetration Testing",
+          "Vulnerability Exploitation",
+          "Network Reconnaissance",
+          "Attack Surface Mapping",
+          "Adversary Simulation",
+        ],
+        accent: "purple",
       },
     ],
     []
@@ -321,6 +314,18 @@ const ExperienceSection: React.FC = () => {
           "Built strong computer science foundation in systems, programming, and networks.",
           "Completed academic projects and practical implementations across core CS topics.",
           "GPA: 9.1 / 10.0",
+        ],
+        accent: "cyan",
+      },
+      {
+        org: "Holy Cross Matriculation Higher Secondary School",
+        role: "High School",
+        time: "June 2018 – April 2020",
+        location: "India",
+        points: [
+          "Demonstrated strong academic discipline with consistent performance throughout high school.",
+          "Active member of the Junior Red Cross; led teams during school activities, showcasing leadership and responsibility.",
+          "First Place – Video Editing Competition, highlighting creativity, technical skills, and adaptability.",
         ],
         accent: "cyan",
       },
