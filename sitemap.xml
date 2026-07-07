@@ -2,4 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://kavennesh.com/</loc></url>
   <url><loc>https://kavennesh.com/writeups/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/recorded-future-open-oauth-dcr/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/lightspark-signing-key-log-exposure/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/mattermost-boards-guest-visibility-admin-oracle/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/mattermost-confluence-oauth-account-link-csrf/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/mattermost-jira-subscription-template-authz/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/vercel-agent-skills-path-traversal/</loc></url>
+  <url><loc>https://kavennesh.com/writeups/planethoster-unauth-idor-invoice-api/</loc></url>
 </urlset>

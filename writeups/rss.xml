@@ -6,6 +6,54 @@
     <description>Vulnerability research and disclosure writeups.</description>
     <language>en-us</language>
     <atom:link xmlns:atom="http://www.w3.org/2005/Atom" href="https://kavennesh.com/writeups/rss.xml" rel="self" type="application/rss+xml" />
-
+    <item>
+      <title>When MCP Meets OAuth, Again: An Open Dynamic Client Registration Endpoint on Recorded Future</title>
+      <link>https://kavennesh.com/writeups/recorded-future-open-oauth-dcr/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/recorded-future-open-oauth-dcr/</guid>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 GMT</pubDate>
+      <description>An unauthenticated OAuth 2.0 Dynamic Client Registration endpoint on Recorded Future's MCP gateway accepts attacker-controlled redirect_uris and unadvertised implicit flows — supplying every precondition for the documented MCP one-click account-takeover pattern.</description>
+    </item>
+    <item>
+      <title>The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532)</title>
+      <link>https://kavennesh.com/writeups/lightspark-signing-key-log-exposure/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/lightspark-signing-key-log-exposure/</guid>
+      <pubDate>Sat, 27 Jun 2026 00:00:00 GMT</pubDate>
+      <description>The one component whose entire job is to never let private keys leave the process wrote the BIP32 master seed to logs on startup — and the reference server shipped pinned to DEBUG, leaking the per-signature key on every operation too. A CWE-532 write-up.</description>
+    </item>
+    <item>
+      <title>The One Endpoint That Forgot to Sanitize: Guest Visibility Bypass &amp; Admin Oracle in Mattermost Boards</title>
+      <link>https://kavennesh.com/writeups/mattermost-boards-guest-visibility-admin-oracle/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/mattermost-boards-guest-visibility-admin-oracle/</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A bulk user-lookup endpoint in mattermost-plugin-boards omitted the guest-visibility filter and profile sanitization both sibling endpoints apply — and stamped each returned user with admin flags, giving a System Guest a reliable is-admin oracle over arbitrary user IDs.</description>
+    </item>
+    <item>
+      <title>Three Small Bugs, One Account Takeover: OAuth Account-Link CSRF in the Mattermost Confluence Plugin</title>
+      <link>https://kavennesh.com/writeups/mattermost-confluence-oauth-account-link-csrf/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/mattermost-confluence-oauth-account-link-csrf/</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A guessable-and-reusable OAuth state, a callback that never checks the state belongs to the requester, and Mattermost forwarding cookie-authed plugin GETs without a CSRF token — combined to let an attacker bind their own Atlassian identity to a victim's Mattermost account.</description>
+    </item>
+    <item>
+      <title>The Sibling That Forgot the Check: Missing Authorization on Jira Subscription-Template Endpoints (Mattermost)</title>
+      <link>https://kavennesh.com/writeups/mattermost-jira-subscription-template-authz/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/mattermost-jira-subscription-template-authz/</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Four subscription-template endpoints in mattermost-plugin-jira were wrapped in checkAuth only — no permission, ownership, or channel check — while every sibling channel-subscription handler enforced the admin gate. Any connected user could read, overwrite, and delete every template instance-wide.</description>
+    </item>
+    <item>
+      <title>Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73)</title>
+      <link>https://kavennesh.com/writeups/vercel-agent-skills-path-traversal/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/vercel-agent-skills-path-traversal/</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
+      <description>The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle.</description>
+    </item>
+    <item>
+      <title>Enumerating an Invoice Database Without Logging In: Unauthenticated IDOR at PlanetHoster</title>
+      <link>https://kavennesh.com/writeups/planethoster-unauth-idor-invoice-api/</link>
+      <guid isPermaLink="true">https://kavennesh.com/writeups/planethoster-unauth-idor-invoice-api/</guid>
+      <pubDate>Wed, 24 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A 'pay invoice as a guest' endpoint answered with zero credentials, keyed lookups solely on a short sequential integer ID, and returned a clean not-found for bad IDs — making the numeric ID the only gate on the customer invoice database. A study in reporting a sensitive IDOR responsibly.</description>
+    </item>
   </channel>
 </rss>

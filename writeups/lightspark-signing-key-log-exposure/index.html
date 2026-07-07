@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532) · Kavennesh Balachandar</title>
+<meta name="description" content="The one component whose entire job is to never let private keys leave the process wrote the BIP32 master seed to logs on startup — and the reference server shipped pinned to DEBUG, leaking the per-signature key on every operation too. A CWE-532 write-up." />
+<meta name="theme-color" content="#09131d" />
+<link rel="canonical" href="https://kavennesh.com/writeups/lightspark-signing-key-log-exposure" />
+<link rel="icon" type="image/jpeg" href="/favicon.jpeg" />
+<link rel="alternate" type="application/rss+xml" title="Kavennesh · Writeups" href="/writeups/rss.xml" />
+<meta property="og:title" content="The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532) · Kavennesh Balachandar" />
+<meta property="og:description" content="The one component whose entire job is to never let private keys leave the process wrote the BIP32 master seed to logs on startup — and the reference server shipped pinned to DEBUG, leaking the per-signature key on every operation too. A CWE-532 write-up." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kavennesh.com/writeups/lightspark-signing-key-log-exposure" />
+<meta property="og:image" content="https://kavennesh.com/enhance.png" />
+<meta property="og:site_name" content="Kavennesh Balachandar" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532) · Kavennesh Balachandar" />
+<meta name="twitter:description" content="The one component whose entire job is to never let private keys leave the process wrote the BIP32 master seed to logs on startup — and the reference server shipped pinned to DEBUG, leaking the per-signature key on every operation too. A CWE-532 write-up." />
+<meta name="twitter:image" content="https://kavennesh.com/enhance.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#02040a;--emerald:#4ade80;--emerald-dim:#10b981;--ink:#e6edf3;--muted:#93a4b3;--line:rgba(74,222,128,0.14);}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;min-height:100vh;color:var(--ink);
+  font-family:"Sora","Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at top,rgba(16,185,129,0.05),transparent 18%),
+    radial-gradient(circle at 85% 15%,rgba(59,130,246,0.05),transparent 16%),
+    linear-gradient(180deg,#04080e 0%,#03060b 28%,#02040a 62%,#010309 100%);
+  background-attachment:fixed;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.045) 2px,rgba(0,0,0,0.045) 4px);}
+#matrix{position:fixed;inset:0;z-index:0;opacity:0.10;pointer-events:none;}
+.page{position:relative;z-index:3;max-width:1080px;margin:0 auto;padding:0 20px;}
+::selection{background:rgba(16,185,129,0.22);color:#fff;}
+a{color:inherit;text-decoration:none;}
+code,pre,.mono,time,.badge,.tag,.eyebrow,.nav,.toc{font-family:ui-monospace,"Monaco","Courier New",monospace;}
+
+/* nav */
+.nav{display:flex;align-items:center;justify-content:space-between;height:80px;}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:0.32em;color:#7ee7a8;text-transform:uppercase;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px rgba(74,222,128,0.8);}
+.navlinks{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;}
+.navlinks a{padding:8px 14px;border:1px solid transparent;border-radius:2px;color:rgba(203,213,225,0.7);transition:.2s;}
+.navlinks a:hover{color:#bff3d0;border-color:rgba(74,222,128,0.18);background:rgba(255,255,255,0.03);}
+.navlinks a.active{color:#bff3d0;border-color:rgba(74,222,128,0.28);background:rgba(74,222,128,0.07);}
+.status{display:flex;align-items:center;gap:6px;color:rgba(126,231,168,0.55);font-size:11px;letter-spacing:0.26em;margin-left:6px;}
+
+/* headings + layout */
+.wrap{padding:32px 0 64px;}
+.eyebrow{display:inline-block;border:1px solid var(--line);background:rgba(74,222,128,0.05);
+  color:rgba(190,242,210,0.8);padding:8px 16px;border-radius:2px;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;}
+.page-title{font-size:52px;line-height:1.02;margin:20px 0 10px;font-weight:700;letter-spacing:-0.01em;}
+.lede{color:var(--muted);font-size:18px;max-width:70ch;line-height:1.7;}
+.dev-note{color:#fbbf24;letter-spacing:.1em;}
+
+/* cards */
+.cards{display:grid;grid-template-columns:1fr;gap:18px;margin-top:32px;}
+@media(min-width:760px){.cards{grid-template-columns:1fr 1fr;}}
+.card{position:relative;overflow:hidden;display:block;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px 22px 22px 26px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012));
+  transition:transform .25s,border-color .25s,box-shadow .25s;}
+.card:hover{transform:translateY(-4px);border-color:rgba(74,222,128,0.28);
+  box-shadow:0 14px 50px rgba(0,0,0,0.5),0 0 0 1px rgba(74,222,128,0.08);}
+.card.is-draft{border-style:dashed;border-color:rgba(148,163,184,0.35);}
+.card[hidden]{display:none;}
+
+/* severity accent bar — 4px inner bar, corners clipped by card radius */
+.accent{position:absolute;left:0;top:0;bottom:0;width:4px;border:0;border-radius:0;}
+.accent.sev-critical{background:#f87171;}
+.accent.sev-high{background:#fb923c;}
+.accent.sev-medium{background:#fbbf24;}
+.accent.sev-low{background:#60a5fa;}
+.accent.sev-info{background:#94a3b8;}
+
+/* featured hero card */
+.card.featured{grid-column:1 / -1;padding:30px 30px 30px 34px;
+  background:linear-gradient(160deg,rgba(74,222,128,0.07),rgba(255,255,255,0.02) 55%,rgba(255,255,255,0.008));}
+.card.featured h2{font-size:28px;}
+.card.featured p{font-size:15.5px;max-width:80ch;}
+.cards.filtering .card.featured{grid-column:auto;padding:22px 22px 22px 26px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012));}
+.cards.filtering .card.featured h2{font-size:20px;}
+.cards.filtering .card.featured p{font-size:14px;}
+
+/* card metadata row */
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 12px;
+  font-family:ui-monospace,"Monaco","Courier New",monospace;font-size:11px;color:var(--muted);}
+.card-meta .reading{color:rgba(203,213,225,0.7);text-transform:uppercase;letter-spacing:0.12em;}
+.dot-sep{color:rgba(148,163,184,0.4);}
+.status-chip{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+  border:1px solid rgba(148,163,184,0.28);color:#b7c2cf;background:rgba(148,163,184,0.08);}
+.status-chip.st-disclosed{border-color:rgba(74,222,128,0.3);color:#9ae6b4;background:rgba(74,222,128,0.07);}
+.status-chip.st-reported{border-color:rgba(125,211,252,0.28);color:#bae6fd;background:rgba(56,189,248,0.07);}
+.status-chip.st-pending{border-color:rgba(251,191,36,0.28);color:#fcd34d;background:rgba(251,191,36,0.07);}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.card time{color:rgba(126,231,168,0.6);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;}
+.card h2{font-size:20px;margin:6px 0 8px;line-height:1.25;}
+.card p{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 14px;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.badge{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:4px 9px;border-radius:3px;border:1px solid;}
+.badge.program{border-color:rgba(74,222,128,0.25);color:#9ae6b4;background:rgba(74,222,128,0.06);}
+.badge.status{border-color:rgba(148,163,184,0.3);color:#cbd5e1;background:rgba(148,163,184,0.08);}
+.badge.draft{border-color:rgba(251,191,36,0.5);color:#fbbf24;background:rgba(251,191,36,0.1);}
+.sev-critical{border-color:rgba(248,113,113,0.45);color:#fca5a5;background:rgba(248,113,113,0.1);}
+.sev-high{border-color:rgba(251,146,60,0.45);color:#fdba74;background:rgba(251,146,60,0.1);}
+.sev-medium{border-color:rgba(251,191,36,0.45);color:#fcd34d;background:rgba(251,191,36,0.1);}
+.sev-low{border-color:rgba(96,165,250,0.45);color:#93c5fd;background:rgba(96,165,250,0.1);}
+.sev-info{border-color:rgba(148,163,184,0.4);color:#cbd5e1;background:rgba(148,163,184,0.09);}
+.tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:11px;color:rgba(203,213,225,0.72);border:1px solid rgba(255,255,255,0.1);
+  padding:3px 9px;border-radius:3px;background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015));}
+.empty{color:var(--muted);}
+.no-results{color:var(--muted);margin-top:24px;font-family:ui-monospace,monospace;font-size:14px;}
+
+/* stats bar */
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;}
+.stat{flex:1 1 auto;min-width:96px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));}
+.stat-num{font-family:ui-monospace,"Monaco","Courier New",monospace;font-size:26px;font-weight:700;color:#eaf2f7;line-height:1;}
+.stat-num.sev-critical{color:#fca5a5;background:none;border:0;}
+.stat-num.sev-high{color:#fdba74;background:none;border:0;}
+.stat-num.sev-medium{color:#fcd34d;background:none;border:0;}
+.stat-num.sev-low{color:#93c5fd;background:none;border:0;}
+.stat-num.sev-info{color:#cbd5e1;background:none;border:0;}
+.stat-label{margin-top:6px;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:22px;
+  padding-bottom:20px;border-bottom:1px solid var(--line);}
+.search{flex:1 1 260px;}
+.search input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;
+  padding:10px 14px;color:var(--ink);font-family:ui-monospace,monospace;font-size:13px;outline:none;transition:border-color .2s;}
+.search input:focus{border-color:rgba(74,222,128,0.4);}
+.search input::placeholder{color:rgba(147,164,179,0.55);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03);color:rgba(203,213,225,0.75);border-radius:999px;padding:6px 13px;
+  font-family:ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;transition:.18s;}
+.chip:hover{border-color:rgba(74,222,128,0.3);color:#bff3d0;}
+.chip.is-active{border-color:rgba(74,222,128,0.45);background:rgba(74,222,128,0.1);color:#bff3d0;}
+.chip-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.chip-dot.sev-critical{background:#f87171;}
+.chip-dot.sev-high{background:#fb923c;}
+.chip-dot.sev-medium{background:#fbbf24;}
+.chip-dot.sev-low{background:#60a5fa;}
+.chip-dot.sev-info{background:#94a3b8;}
+.sort{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.sort-label{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+.sort select{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:8px;
+  padding:8px 12px;color:var(--ink);font-family:ui-monospace,monospace;font-size:12px;outline:none;cursor:pointer;}
+.sort select:focus{border-color:rgba(74,222,128,0.4);}
+
+/* post */
+.post .back{display:inline-block;color:rgba(126,231,168,0.7);font-size:12px;letter-spacing:0.16em;
+  text-transform:uppercase;margin-bottom:18px;}
+.post .back:hover{color:var(--emerald);}
+.post-head h1{font-size:38px;line-height:1.1;margin:14px 0 12px;}
+.post-head .meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:var(--muted);}
+.post-head time{color:rgba(126,231,168,0.6);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;}
+.post-grid{display:grid;grid-template-columns:1fr;gap:28px;margin-top:28px;}
+@media(min-width:900px){.post-grid{grid-template-columns:220px 1fr;}}
+.toc{position:sticky;top:24px;align-self:start;border-left:1px solid var(--line);padding-left:16px;font-size:13px;}
+.toc-title{color:rgba(126,231,168,0.6);text-transform:uppercase;letter-spacing:0.2em;font-size:11px;margin-bottom:10px;}
+.toc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+.toc li.lvl3{padding-left:14px;}
+.toc a{color:rgba(203,213,225,0.7);}
+.toc a:hover{color:var(--emerald);}
+@media(max-width:899px){.toc{position:static;border-left:none;padding-left:0;border-bottom:1px solid var(--line);padding-bottom:16px;}}
+
+/* prose */
+.prose{max-width:74ch;font-size:16px;line-height:1.75;color:#dbe4ec;}
+.prose h2{font-size:26px;margin:36px 0 12px;padding-top:6px;color:#fff;letter-spacing:-0.01em;}
+.prose h3{font-size:20px;margin:26px 0 10px;color:#eaf2f7;}
+.prose h2 .header-anchor,.prose h3 .header-anchor{color:rgba(74,222,128,0.45);margin-right:8px;text-decoration:none;font-weight:400;}
+.prose h2 .header-anchor:hover,.prose h3 .header-anchor:hover{color:var(--emerald);}
+.prose p{margin:0 0 16px;}
+.prose a{color:#7ee7a8;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,222,128,0.4);}
+.prose a:hover{text-decoration-color:var(--emerald);}
+.prose ul,.prose ol{padding-left:22px;margin:0 0 16px;}
+.prose li{margin:6px 0;}
+.prose strong{color:#fff;}
+.prose blockquote{border-left:3px solid rgba(74,222,128,0.4);margin:18px 0;padding:6px 18px;
+  background:rgba(74,222,128,0.04);color:#c8d4de;border-radius:0 6px 6px 0;}
+.prose code{font-size:13.5px;background:rgba(148,163,184,0.14);padding:2px 6px;border-radius:4px;color:#e6edf3;}
+.prose pre{margin:0 0 18px;padding:16px 18px;border-radius:10px;overflow-x:auto;
+  border:1px solid rgba(74,222,128,0.14);background:#050a12;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
+.prose pre code{background:none;padding:0;font-size:13.5px;line-height:1.6;color:#cfe8d6;}
+.prose table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:14px;}
+.prose th,.prose td{border:1px solid rgba(255,255,255,0.1);padding:8px 12px;text-align:left;}
+.prose th{background:rgba(74,222,128,0.06);color:#bff3d0;}
+
+/* highlight.js (emerald-tuned dark) */
+.hljs{color:#cfe8d6;}
+.hljs-comment,.hljs-quote{color:#5b7183;font-style:italic;}
+.hljs-keyword,.hljs-selector-tag,.hljs-built_in,.hljs-name{color:#5eead4;}
+.hljs-string,.hljs-attr,.hljs-template-tag{color:#86efac;}
+.hljs-number,.hljs-literal,.hljs-variable,.hljs-symbol{color:#fbbf24;}
+.hljs-title,.hljs-section,.hljs-function .hljs-title{color:#7dd3fc;}
+.hljs-type,.hljs-class .hljs-title{color:#93c5fd;}
+.hljs-meta,.hljs-tag{color:#94a3b8;}
+.hljs-attribute{color:#fda4af;}
+.hljs-deletion{color:#fca5a5;}
+.hljs-addition{color:#86efac;}
+.hljs-emphasis{font-style:italic;}
+.hljs-strong{font-weight:700;}
+
+/* banners */
+.draft-banner{border:1px solid rgba(251,191,36,0.5);background:rgba(251,191,36,0.1);color:#fde68a;
+  padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;letter-spacing:0.04em;
+  font-family:ui-monospace,monospace;}
+
+/* 404 */
+.notfound{min-height:60vh;}
+.nf-links{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+.btn{border:1px solid var(--emerald);color:#062012;background:var(--emerald);padding:11px 20px;border-radius:8px;
+  font-weight:600;font-size:14px;}
+.btn.ghost{background:transparent;color:#8ff0ad;border-color:rgba(74,222,128,0.5);}
+.btn:hover{filter:brightness(1.05);}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);
+  padding:22px 0 30px;margin-top:20px;color:rgba(147,164,179,0.7);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;
+  font-family:ui-monospace,monospace;}
+.foot a:hover{color:var(--emerald);}
+</style>
+
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="page">
+<header class="nav">
+  <a class="brand" href="/"><span class="dot"></span>KB_SEC</a>
+  <nav class="navlinks">
+    <a href="/">HOME</a>
+    <a class="active" href="/writeups/">[WRITEUPS]</a>
+    <span class="status"><span class="dot"></span>ONLINE</span>
+  </nav>
+</header>
+<main class="wrap post">
+  
+  <a class="back" href="/writeups/">&larr; All writeups</a>
+  <article>
+    <div class="post-head">
+      <div class="badges">
+        <span class="badge sev-high">High</span>
+        <span class="badge program">HackerOne · Lightspark</span>
+        <span class="badge status">Duplicate (Independent Discovery)</span>
+      </div>
+      <h1>The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532)</h1>
+      <div class="meta">
+        <time datetime="2026-06-27">Jun 27, 2026</time>
+        <span class="tags"><span class="tag">cwe-532</span><span class="tag">sensitive-data-exposure</span><span class="tag">lightning</span><span class="tag">bitcoin</span><span class="tag">rust</span><span class="tag">logging</span></span>
+      </div>
+    </div>
+    <div class="post-grid">
+      <nav class="toc" aria-label="Table of contents">
+    <div class="toc-title">On this page</div>
+    <ul><li class="lvl2"><a href="#tldr">TL;DR</a></li><li class="lvl2"><a href="#background-the-one-process-that-must-never-leak-a-key">Background: the one process that must never leak a key</a></li><li class="lvl2"><a href="#sink-a-the-library-logs-the-signing-key-on-every-operation">Sink A — the library logs the signing key on every operation</a></li><li class="lvl2"><a href="#sink-b-the-reference-server-logs-the-master-seed-on-every-startup">Sink B — the reference server logs the master seed on every startup</a></li><li class="lvl2"><a href="#the-amplifier-the-reference-server-ships-at-debug">The amplifier — the reference server ships at DEBUG</a></li><li class="lvl2"><a href="#proof-published-test-vectors-only">Proof (published test vectors only)</a></li><li class="lvl2"><a href="#why-its-an-oversight-not-a-design-choice">Why it's an oversight, not a design choice</a></li><li class="lvl2"><a href="#impact">Impact</a></li><li class="lvl2"><a href="#remediation">Remediation</a></li><li class="lvl2"><a href="#disclosure-timeline">Disclosure timeline</a></li><li class="lvl2"><a href="#references">References</a></li></ul>
+  </nav>
+      <div class="prose"><p><em>By Kavennesh Balachandar · HackerOne · Lightspark Bug Bounty Program</em></p>
+<h2 id="tldr" tabindex="-1"><a class="header-anchor" href="#tldr">#</a> TL;DR</h2>
+<p><code>lightspark-rs</code> — Lightspark's Rust remote-signing SDK — writes private key
+material into application logs (CWE-532). Two distinct sinks: the library logs
+the derived per-operation <strong>signing key</strong> at <code>debug</code> on every signature, and the
+bundled reference server logs the entire <code>Config</code> — including the <strong>BIP32 master
+seed</strong> — at <code>info</code> on every startup. The reference server also pins its log
+subscriber to <code>Level::DEBUG</code> in code, so the per-signature leak is active out of
+the box with no misconfiguration. Anyone who can read the signer's logs recovers
+key material and can forge valid Lightning signatures to drain the channels
+those keys control. Severity: <strong>High</strong>. Reported honestly — including that the
+proof uses published test-vector values, not captured production data — and
+closed as a duplicate.</p>
+<h2 id="background-the-one-process-that-must-never-leak-a-key" tabindex="-1"><a class="header-anchor" href="#background-the-one-process-that-must-never-leak-a-key">#</a> Background: the one process that must never leak a key</h2>
+<p>A remote signer exists for exactly one reason: to be the <em>only</em> place private
+keys live. Everything else in the system — the node, the API layer, the webhook
+plumbing — is designed so it never has to touch raw key material. The signer
+accepts a request (&quot;sign this message under this derivation path&quot;) and returns
+<em>only</em> a signature. The keys go in once and never come back out.</p>
+<p>That design has a corollary that's easy to state and easy to violate: <strong>the
+signer's logs must never contain a key.</strong> Logs are the least-protected data a
+service produces. They stream to stdout, get scraped into a SIEM, shipped to a
+managed vendor, rotated into backups, and read by on-call engineers. If a secret
+reaches a log line, it has effectively left the vault and entered the part of
+the system with the widest audience. For a signer, a key in a log is not a
+lesser version of &quot;key compromise&quot; — it <em>is</em> key compromise.</p>
+<p><code>lightspark-rs</code> does this in two places.</p>
+<h2 id="sink-a-the-library-logs-the-signing-key-on-every-operation" tabindex="-1"><a class="header-anchor" href="#sink-a-the-library-logs-the-signing-key-on-every-operation">#</a> Sink A — the library logs the signing key on every operation</h2>
+<p>In <code>lightspark-remote-signing/src/signer.rs</code>, the core <code>derive_key_and_sign</code>
+function derives the private signing key, signs the message, and then logs the
+key:</p>
+<pre class="hljs"><code class="language-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">signing_key</span> =
+    <span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">derive_and_tweak_key</span>(derivation_path.<span class="hljs-title function_ invoke__">clone</span>(), add_tweak, mul_tweak)?;
+<span class="hljs-keyword">let</span> <span class="hljs-variable">msg</span> = Message::<span class="hljs-title function_ invoke__">from_slice</span>(message.<span class="hljs-title function_ invoke__">as_slice</span>()).<span class="hljs-title function_ invoke__">map_err</span>(Error::Secp256k1Error)?;
+<span class="hljs-keyword">let</span> <span class="hljs-variable">signature</span> = secp.<span class="hljs-title function_ invoke__">sign_ecdsa</span>(&amp;msg, &amp;signing_key);
+
+debug!(<span class="hljs-string">&quot;Derivation: {}&quot;</span>, derivation_path);
+debug!(<span class="hljs-string">&quot;Signing Key: {}&quot;</span>, hex::<span class="hljs-title function_ invoke__">encode</span>(signing_key.<span class="hljs-title function_ invoke__">as_ref</span>()));   <span class="hljs-comment">// signer.rs:176 — raw private key</span>
+debug!(<span class="hljs-string">&quot;Verification Key: {}&quot;</span>, signing_key.<span class="hljs-title function_ invoke__">public_key</span>(&amp;secp).<span class="hljs-title function_ invoke__">to_string</span>());
+debug!(<span class="hljs-string">&quot;Message: {}&quot;</span>, hex::<span class="hljs-title function_ invoke__">encode</span>(message.<span class="hljs-title function_ invoke__">as_slice</span>()));
+</code></pre>
+<p><code>derive_and_tweak_key</code> returns a <code>secp256k1::SecretKey</code> — the private signing
+key. <code>.as_ref()</code> exposes its raw 32 bytes, which <code>hex::encode</code> + <code>debug!</code> write
+straight to the log. The line immediately below logs
+<code>signing_key.public_key(&amp;secp)</code> as the &quot;Verification Key&quot; — the <em>public</em> half of
+the very same variable — which is what makes this unambiguous: the line above it
+is the private key, not a public identifier.</p>
+<p>This is the more insidious of the two sinks because it lives in <strong>library</strong>
+code. Every integrator who builds on <code>lightspark-remote-signing</code> inherits it,
+and it fires on the hot path — once per signature, for every <code>DERIVE_KEY_AND_SIGN</code>
+sub-event the signer handles.</p>
+<h2 id="sink-b-the-reference-server-logs-the-master-seed-on-every-startup" tabindex="-1"><a class="header-anchor" href="#sink-b-the-reference-server-logs-the-master-seed-on-every-startup">#</a> Sink B — the reference server logs the master seed on every startup</h2>
+<p>In the bundled reference server, <code>Config</code> carries a blanket <code>#[derive(Debug)]</code>
+over fields that include the master seed and two other secrets:</p>
+<pre class="hljs"><code class="language-rust"><span class="hljs-meta">#[derive(Debug, Clone)]</span>                 <span class="hljs-comment">// config.rs — blanket Debug over secret fields</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Config</span> {
+    <span class="hljs-keyword">pub</span> api_client_secret: <span class="hljs-type">String</span>,      <span class="hljs-comment">// secret</span>
+    <span class="hljs-keyword">pub</span> webhook_secret: <span class="hljs-type">String</span>,         <span class="hljs-comment">// secret (webhook HMAC trust anchor)</span>
+    <span class="hljs-keyword">pub</span> master_seed_hex: <span class="hljs-type">String</span>,        <span class="hljs-comment">// MASTER SEED — root of every derived key</span>
+    <span class="hljs-comment">// ...</span>
+}
+</code></pre>
+<p>and <code>main.rs</code> logs the whole struct at <code>info</code> on startup:</p>
+<pre class="hljs"><code class="language-rust">info!(config = <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, config), <span class="hljs-string">&quot;Starting Remote Signer.&quot;</span>);   <span class="hljs-comment">// main.rs:92</span>
+</code></pre>
+<p>So <code>master_seed_hex</code>, <code>webhook_secret</code>, and <code>api_client_secret</code> flow from env
+vars → <code>Config</code> → <code>{:?}</code> → <code>info!</code>. This is the more catastrophic sink: the
+master seed is the root from which <em>every</em> channel key is deterministically
+derived, and it's emitted at <code>info</code> — always on, no debug level required — every
+single time the process starts.</p>
+<h2 id="the-amplifier-the-reference-server-ships-at-debug" tabindex="-1"><a class="header-anchor" href="#the-amplifier-the-reference-server-ships-at-debug">#</a> The amplifier — the reference server ships at DEBUG</h2>
+<p>You might reasonably assume Sink A is dormant in production, since it's a <code>debug</code>
+line. It isn't — the reference server hardcodes the log level:</p>
+<pre class="hljs"><code class="language-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">subscriber</span> = FmtSubscriber::<span class="hljs-title function_ invoke__">builder</span>()
+    .<span class="hljs-title function_ invoke__">with_max_level</span>(Level::DEBUG)       <span class="hljs-comment">// hardcoded, not env-driven</span>
+    .<span class="hljs-title function_ invoke__">finish</span>();
+</code></pre>
+<p>Because the canonical reference signer pins the subscriber to <code>Level::DEBUG</code>,
+a freshly deployed signer logs the private signing key for every payment with no
+misconfiguration on the operator's part. Sink A is on by default; Sink B is
+<code>info</code> and therefore unaffected by level in the first place. Both fire out of the
+box.</p>
+<h2 id="proof-published-test-vectors-only" tabindex="-1"><a class="header-anchor" href="#proof-published-test-vectors-only">#</a> Proof (published test vectors only)</h2>
+<p>Below is the deterministic output of the exact format strings at the cited
+lines, using <strong>BIP32 test vector 1</strong> — seed <code>000102030405060708090a0b0c0d0e0f</code>,
+derivation path <code>m</code>. These are published, independently verifiable values, so
+the demonstration exposes nothing real; it is <strong>not</strong> a capture of Lightspark
+production traffic.</p>
+<pre class="hljs"><code class="language-text">INFO  lightspark_remote_signing_server: Starting Remote Signer. config=&quot;Config { ... master_seed_hex: \&quot;000102030405060708090a0b0c0d0e0f\&quot;, ... }&quot;
+DEBUG lightspark_remote_signing::signer: Derivation: m
+DEBUG lightspark_remote_signing::signer: Signing Key: e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35
+DEBUG lightspark_remote_signing::signer: Verification Key: 0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2
+</code></pre>
+<p>The <code>Signing Key</code> hex is the <strong>private</strong> key of the master node of test vector 1;
+the <code>Verification Key</code> below it is that key's matching <strong>public</strong> value — both
+are published constants, and their pairing is what proves the line above is the
+secret. <code>master_seed_hex</code> appears in clear in the <code>info</code> line. In a real
+deployment those placeholders are the operator's actual seed and keys.</p>
+<h2 id="why-its-an-oversight-not-a-design-choice" tabindex="-1"><a class="header-anchor" href="#why-its-an-oversight-not-a-design-choice">#</a> Why it's an oversight, not a design choice</h2>
+<p>The strongest evidence that this is a slip rather than intended behaviour is that
+<strong>the same codebase already gets it right elsewhere:</strong></p>
+<ul>
+<li>The core <code>lightspark-crypto-uniffi</code> crate implements the same
+derive-and-sign logic with <strong>no key logging</strong> — the secret never reaches a log
+sink there.</li>
+<li><code>Mnemonic</code>, <code>Seed</code>, and <code>LightsparkSigner</code> deliberately do <strong>not</strong> derive
+<code>Debug</code>, precisely so a stray <code>{:?}</code> can't leak them.</li>
+</ul>
+<p>The reference server's <code>Config</code> breaks that same discipline by deriving <code>Debug</code>
+over the master seed, and <code>signer.rs</code> breaks it by logging the derived key. The
+fix is to apply the project's own existing pattern to the two spots that missed
+it.</p>
+<h2 id="impact" tabindex="-1"><a class="header-anchor" href="#impact">#</a> Impact</h2>
+<p>Anyone able to read the signer's logs — a SIEM, container stdout, a log-shipping
+pipeline, a managed log vendor, log backups, or an attacker who reaches any of
+those — recovers key material without any memory-corruption or exotic primitive.
+It is a <em>read of a log line</em>.</p>
+<ul>
+<li>The per-operation signing key (Sink A) compromises the channel(s) that key
+controls.</li>
+<li>The master seed (Sink B) deterministically regenerates <strong>every</strong> key the node
+will ever derive → forge valid commitment / HTLC signatures → drain channel
+balances.</li>
+</ul>
+<p><strong>Severity: High.</strong> A representative vector lands around
+<code>CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H</code> (~7.x), but the realistic score
+depends heavily on how exposed the logs are in a given deployment — local-only
+debug output is very different from logs shipped to a central store an attacker
+can reach. Treat it as High with that caveat rather than a single fixed number
+claimed for all deployments; the leak does require log-read access, and that's
+stated plainly rather than glossed over.</p>
+<h2 id="remediation" tabindex="-1"><a class="header-anchor" href="#remediation">#</a> Remediation</h2>
+<ul>
+<li><strong>Sink A:</strong> stop logging <code>signing_key</code>. If a debug breadcrumb is needed, log
+only the derivation path and/or the public key — never the secret.</li>
+<li><strong>Sink B:</strong> remove <code>master_seed_hex</code> / <code>webhook_secret</code> / <code>api_client_secret</code>
+from <code>Config</code>'s <code>Debug</code> output (a custom redacting <code>Debug</code> impl, or a
+<code>Secret&lt;&gt;</code>-style wrapper that refuses to serialize), and don't log the whole
+<code>Config</code>.</li>
+<li><strong>Amplifier:</strong> don't hardcode <code>Level::DEBUG</code> in the reference server; make the
+level env-driven and default to a lower verbosity.</li>
+<li><strong>Regression guard:</strong> add a secret-in-logs lint / CI check for high-entropy
+strings so this can't silently return.</li>
+</ul>
+<h2 id="disclosure-timeline" tabindex="-1"><a class="header-anchor" href="#disclosure-timeline">#</a> Disclosure timeline</h2>
+<ul>
+<li><strong>2026-06-27</strong> — Reported to Lightspark via HackerOne (#3827896), against repo
+HEAD <code>fcb31f8580e9435e6114fac3ab56117aa3658556</code> (<code>lightspark-remote-signing</code>
+v0.3.0, SDK v0.10.2).</li>
+<li>Closed as <strong>duplicate</strong> — independently discovered, reported concurrently with
+another researcher.</li>
+<li>Public disclosure pending program approval.</li>
+</ul>
+<h2 id="references" tabindex="-1"><a class="header-anchor" href="#references">#</a> References</h2>
+<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/532.html">CWE-532 — Insertion of Sensitive Information into Log File</a></li>
+<li><a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP32 — Hierarchical Deterministic Wallets</a> (and its published test vectors)</li>
+<li>General guidance on keeping secrets out of <code>Debug</code>/logs in Rust (redaction wrappers such as the <code>secrecy</code> crate).</li>
+</ul>
+</div>
+    </div>
+  </article>
+</main>
+<footer class="foot">
+  <span>© 2026 Kavennesh Balachandar</span>
+  <a href="/writeups/rss.xml">RSS</a>
+</footer>
+</div>
+<script>(function(){
+  var c=document.getElementById('matrix'); if(!c) return;
+  var x=c.getContext('2d'); var fs=14, cols, drops;
+  var glyphs='01<>[]{}/\\|=+-*ｱｶｻﾀﾅﾊﾏﾔﾗ0123456789ABCDEF'.split('');
+  function resize(){ c.width=innerWidth; c.height=innerHeight; cols=Math.floor(c.width/fs); drops=Array(cols).fill(1); }
+  resize(); addEventListener('resize',resize);
+  function draw(){
+    x.fillStyle='rgba(2,4,10,0.08)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='rgba(74,222,128,0.45)'; x.font=fs+'px monospace';
+    for(var i=0;i<drops.length;i++){
+      var t=glyphs[Math.floor(Math.random()*glyphs.length)];
+      x.fillText(t,i*fs,drops[i]*fs);
+      if(drops[i]*fs>c.height && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce){ setInterval(draw, 60); } else { draw(); }
+})();</script>
+</body>
+</html>

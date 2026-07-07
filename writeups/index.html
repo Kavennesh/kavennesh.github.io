@@ -246,8 +246,198 @@ code,pre,.mono,time,.badge,.tag,.eyebrow,.nav,.toc{font-family:ui-monospace,"Mon
   <div class="eyebrow">module://writeups</div>
   <h1 class="page-title">Writeups</h1>
   <p class="lede">Vulnerability research, disclosure notes, and technical deep-dives — published newest first.</p>
-  <section class="cards"><p class="empty">No published writeups yet.</p></section>
+
+  <section class="stats" aria-label="Summary"><div class="stat"><div class="stat-num">7</div><div class="stat-label">Findings</div></div><div class="stat"><div class="stat-num sev-high">2</div><div class="stat-label">High</div></div><div class="stat"><div class="stat-num sev-medium">4</div><div class="stat-label">Medium</div></div><div class="stat"><div class="stat-num sev-low">1</div><div class="stat-label">Low</div></div><div class="stat"><div class="stat-num">2</div><div class="stat-label">Platforms</div></div></section>
+
+  <section class="toolbar">
+    <div class="search">
+      <input id="wu-search" type="search" placeholder="search title, description, tags…" aria-label="Search writeups" autocomplete="off" />
+    </div>
+    <div class="chips" id="wu-chips" role="group" aria-label="Filter by severity"><button class="chip is-active" data-sev="all">All</button><button class="chip" data-sev="high"><span class="chip-dot sev-high"></span>High</button><button class="chip" data-sev="medium"><span class="chip-dot sev-medium"></span>Medium</button><button class="chip" data-sev="low"><span class="chip-dot sev-low"></span>Low</button></div>
+    <div class="sort">
+      <label for="wu-sort" class="sort-label">Sort</label>
+      <select id="wu-sort" aria-label="Sort writeups">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="severity">Severity</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="cards" id="wu-grid">
+    <a class="card featured" href="/writeups/recorded-future-open-oauth-dcr/" data-title="when mcp meets oauth, again: an open dynamic client registration endpoint on recorded future" data-desc="an unauthenticated oauth 2.0 dynamic client registration endpoint on recorded future's mcp gateway accepts attacker-controlled redirect_uris and unadvertised implicit flows — supplying every precondition for the documented mcp one-click account-takeover pattern." data-tags="oauth dynamic-client-registration mcp account-takeover authentication" data-severity="medium" data-sevrank="3" data-date="2026-07-01" data-featured="1">
+  <span class="accent sev-medium" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-medium">Medium</span>
+      <span class="badge program">Bugcrowd · Recorded Future</span>
+    </div>
+  </div>
+  <h2>When MCP Meets OAuth, Again: An Open Dynamic Client Registration Endpoint on Recorded Future</h2>
+  <p>An unauthenticated OAuth 2.0 Dynamic Client Registration endpoint on Recorded Future's MCP gateway accepts attacker-controlled redirect_uris and unadvertised implicit flows — supplying every precondition for the documented MCP one-click account-takeover pattern.</p>
+  <div class="card-meta">
+    <time datetime="2026-07-01">Jul 1, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">5 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate</span>
+  </div>
+  <div class="tags"><span class="tag">oauth</span><span class="tag">dynamic-client-registration</span><span class="tag">mcp</span><span class="tag">account-takeover</span><span class="tag">authentication</span></div>
+</a>
+<a class="card" href="/writeups/lightspark-signing-key-log-exposure/" data-title="the signer that logged its own keys: master seed &amp; signing-key disclosure in lightspark-rs (cwe-532)" data-desc="the one component whose entire job is to never let private keys leave the process wrote the bip32 master seed to logs on startup — and the reference server shipped pinned to debug, leaking the per-signature key on every operation too. a cwe-532 write-up." data-tags="cwe-532 sensitive-data-exposure lightning bitcoin rust logging" data-severity="high" data-sevrank="4" data-date="2026-06-27" data-featured="0">
+  <span class="accent sev-high" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-high">High</span>
+      <span class="badge program">HackerOne · Lightspark</span>
+    </div>
+  </div>
+  <h2>The Signer That Logged Its Own Keys: Master Seed &amp; Signing-Key Disclosure in lightspark-rs (CWE-532)</h2>
+  <p>The one component whose entire job is to never let private keys leave the process wrote the BIP32 master seed to logs on startup — and the reference server shipped pinned to DEBUG, leaking the per-signature key on every operation too. A CWE-532 write-up.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-27">Jun 27, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">7 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate (Independent Discovery)</span>
+  </div>
+  <div class="tags"><span class="tag">cwe-532</span><span class="tag">sensitive-data-exposure</span><span class="tag">lightning</span><span class="tag">bitcoin</span><span class="tag">rust</span><span class="tag">logging</span></div>
+</a>
+<a class="card" href="/writeups/mattermost-boards-guest-visibility-admin-oracle/" data-title="the one endpoint that forgot to sanitize: guest visibility bypass &amp; admin oracle in mattermost boards" data-desc="a bulk user-lookup endpoint in mattermost-plugin-boards omitted the guest-visibility filter and profile sanitization both sibling endpoints apply — and stamped each returned user with admin flags, giving a system guest a reliable is-admin oracle over arbitrary user ids." data-tags="access-control information-disclosure mattermost guest-boundary sibling-path-diffing" data-severity="low" data-sevrank="2" data-date="2026-06-26" data-featured="0">
+  <span class="accent sev-low" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-low">Low</span>
+      <span class="badge program">Bugcrowd · Mattermost</span>
+    </div>
+  </div>
+  <h2>The One Endpoint That Forgot to Sanitize: Guest Visibility Bypass &amp; Admin Oracle in Mattermost Boards</h2>
+  <p>A bulk user-lookup endpoint in mattermost-plugin-boards omitted the guest-visibility filter and profile sanitization both sibling endpoints apply — and stamped each returned user with admin flags, giving a System Guest a reliable is-admin oracle over arbitrary user IDs.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-26">Jun 26, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">2 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate</span>
+  </div>
+  <div class="tags"><span class="tag">access-control</span><span class="tag">information-disclosure</span><span class="tag">mattermost</span><span class="tag">guest-boundary</span><span class="tag">sibling-path-diffing</span></div>
+</a>
+<a class="card" href="/writeups/mattermost-confluence-oauth-account-link-csrf/" data-title="three small bugs, one account takeover: oauth account-link csrf in the mattermost confluence plugin" data-desc="a guessable-and-reusable oauth state, a callback that never checks the state belongs to the requester, and mattermost forwarding cookie-authed plugin gets without a csrf token — combined to let an attacker bind their own atlassian identity to a victim's mattermost account." data-tags="csrf oauth account-linking mattermost session-integrity" data-severity="medium" data-sevrank="3" data-date="2026-06-26" data-featured="0">
+  <span class="accent sev-medium" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-medium">Medium</span>
+      <span class="badge program">Bugcrowd · Mattermost</span>
+    </div>
+  </div>
+  <h2>Three Small Bugs, One Account Takeover: OAuth Account-Link CSRF in the Mattermost Confluence Plugin</h2>
+  <p>A guessable-and-reusable OAuth state, a callback that never checks the state belongs to the requester, and Mattermost forwarding cookie-authed plugin GETs without a CSRF token — combined to let an attacker bind their own Atlassian identity to a victim's Mattermost account.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-26">Jun 26, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">3 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate</span>
+  </div>
+  <div class="tags"><span class="tag">csrf</span><span class="tag">oauth</span><span class="tag">account-linking</span><span class="tag">mattermost</span><span class="tag">session-integrity</span></div>
+</a>
+<a class="card" href="/writeups/mattermost-jira-subscription-template-authz/" data-title="the sibling that forgot the check: missing authorization on jira subscription-template endpoints (mattermost)" data-desc="four subscription-template endpoints in mattermost-plugin-jira were wrapped in checkauth only — no permission, ownership, or channel check — while every sibling channel-subscription handler enforced the admin gate. any connected user could read, overwrite, and delete every template instance-wide." data-tags="access-control idor authorization mattermost sibling-path-diffing" data-severity="medium" data-sevrank="3" data-date="2026-06-26" data-featured="0">
+  <span class="accent sev-medium" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-medium">Medium</span>
+      <span class="badge program">Bugcrowd · Mattermost</span>
+    </div>
+  </div>
+  <h2>The Sibling That Forgot the Check: Missing Authorization on Jira Subscription-Template Endpoints (Mattermost)</h2>
+  <p>Four subscription-template endpoints in mattermost-plugin-jira were wrapped in checkAuth only — no permission, ownership, or channel check — while every sibling channel-subscription handler enforced the admin gate. Any connected user could read, overwrite, and delete every template instance-wide.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-26">Jun 26, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">3 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate</span>
+  </div>
+  <div class="tags"><span class="tag">access-control</span><span class="tag">idor</span><span class="tag">authorization</span><span class="tag">mattermost</span><span class="tag">sibling-path-diffing</span></div>
+</a>
+<a class="card" href="/writeups/vercel-agent-skills-path-traversal/" data-title="reading /root/.ssh/id_rsa through an ai agent: path traversal in vercel's vercel-optimize skill (cwe-22/73)" data-desc="the vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. an attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle." data-tags="path-traversal local-file-read ai-agent-security prompt-injection node" data-severity="medium" data-sevrank="3" data-date="2026-06-26" data-featured="0">
+  <span class="accent sev-medium" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-medium">Medium</span>
+      <span class="badge program">HackerOne · Vercel Open Source</span>
+    </div>
+  </div>
+  <h2>Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73)</h2>
+  <p>The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-26">Jun 26, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">5 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate (Independent Discovery)</span>
+  </div>
+  <div class="tags"><span class="tag">path-traversal</span><span class="tag">local-file-read</span><span class="tag">ai-agent-security</span><span class="tag">prompt-injection</span><span class="tag">node</span></div>
+</a>
+<a class="card" href="/writeups/planethoster-unauth-idor-invoice-api/" data-title="enumerating an invoice database without logging in: unauthenticated idor at planethoster" data-desc="a 'pay invoice as a guest' endpoint answered with zero credentials, keyed lookups solely on a short sequential integer id, and returned a clean not-found for bad ids — making the numeric id the only gate on the customer invoice database. a study in reporting a sensitive idor responsibly." data-tags="idor access-control unauthenticated financial-data responsible-disclosure" data-severity="high" data-sevrank="4" data-date="2026-06-24" data-featured="0">
+  <span class="accent sev-high" aria-hidden="true"></span>
+  <div class="card-top">
+    <div class="badges">
+      
+      <span class="badge sev-high">High</span>
+      <span class="badge program">Bugcrowd · PlanetHoster</span>
+    </div>
+  </div>
+  <h2>Enumerating an Invoice Database Without Logging In: Unauthenticated IDOR at PlanetHoster</h2>
+  <p>A 'pay invoice as a guest' endpoint answered with zero credentials, keyed lookups solely on a short sequential integer ID, and returned a clean not-found for bad IDs — making the numeric ID the only gate on the customer invoice database. A study in reporting a sensitive IDOR responsibly.</p>
+  <div class="card-meta">
+    <time datetime="2026-06-24">Jun 24, 2026</time>
+    <span class="dot-sep">·</span>
+    <span class="reading">4 min read</span>
+    <span class="dot-sep">·</span><span class="status-chip st-duplicate">Duplicate</span>
+  </div>
+  <div class="tags"><span class="tag">idor</span><span class="tag">access-control</span><span class="tag">unauthenticated</span><span class="tag">financial-data</span><span class="tag">responsible-disclosure</span></div>
+</a>
+  </section>
+  <p class="no-results" id="wu-empty" hidden>No writeups match your filters.</p>
 </main>
+<script>(function(){
+  var grid=document.getElementById('wu-grid'); if(!grid) return;
+  var search=document.getElementById('wu-search');
+  var chips=document.getElementById('wu-chips');
+  var sortSel=document.getElementById('wu-sort');
+  var empty=document.getElementById('wu-empty');
+  var original=[].slice.call(grid.querySelectorAll('.card'));
+  var state={q:'',sev:'all',sort:'newest'};
+  function byDate(a,b,dir){ return a.dataset.date<b.dataset.date?dir:a.dataset.date>b.dataset.date?-dir:0; }
+  function cmp(a,b){
+    if(state.sort==='oldest') return byDate(a,b,1);
+    if(state.sort==='severity'){ var d=(+b.dataset.sevrank)-(+a.dataset.sevrank); return d?d:byDate(a,b,-1); }
+    return byDate(a,b,-1);
+  }
+  function apply(){
+    var active = state.q!=='' || state.sev!=='all' || state.sort!=='newest';
+    grid.classList.toggle('filtering', active);
+    var ordered = active ? original.slice().sort(cmp) : original.slice();
+    ordered.forEach(function(c){ grid.appendChild(c); });
+    var shown=0;
+    ordered.forEach(function(c){
+      var okSev = state.sev==='all' || c.dataset.severity===state.sev;
+      var okQ = state.q==='' || c.dataset.title.indexOf(state.q)>=0 || c.dataset.desc.indexOf(state.q)>=0 || c.dataset.tags.indexOf(state.q)>=0;
+      var vis = okSev && okQ;
+      c.hidden = !vis; if(vis) shown++;
+    });
+    if(empty) empty.hidden = shown>0;
+  }
+  if(search) search.addEventListener('input', function(){ state.q=this.value.trim().toLowerCase(); apply(); });
+  if(sortSel) sortSel.addEventListener('change', function(){ state.sort=this.value; apply(); });
+  if(chips) chips.addEventListener('click', function(e){
+    var b=e.target.closest('.chip'); if(!b) return;
+    state.sev=b.getAttribute('data-sev');
+    [].slice.call(chips.querySelectorAll('.chip')).forEach(function(x){ x.classList.toggle('is-active', x===b); });
+    apply();
+  });
+})();</script>
 <footer class="foot">
   <span>© 2026 Kavennesh Balachandar</span>
   <a href="/writeups/rss.xml">RSS</a>

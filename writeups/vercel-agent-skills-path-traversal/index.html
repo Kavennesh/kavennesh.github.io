@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73) · Kavennesh Balachandar</title>
+<meta name="description" content="The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle." />
+<meta name="theme-color" content="#09131d" />
+<link rel="canonical" href="https://kavennesh.com/writeups/vercel-agent-skills-path-traversal" />
+<link rel="icon" type="image/jpeg" href="/favicon.jpeg" />
+<link rel="alternate" type="application/rss+xml" title="Kavennesh · Writeups" href="/writeups/rss.xml" />
+<meta property="og:title" content="Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73) · Kavennesh Balachandar" />
+<meta property="og:description" content="The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kavennesh.com/writeups/vercel-agent-skills-path-traversal" />
+<meta property="og:image" content="https://kavennesh.com/surfacemapper.png" />
+<meta property="og:site_name" content="Kavennesh Balachandar" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73) · Kavennesh Balachandar" />
+<meta name="twitter:description" content="The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle." />
+<meta name="twitter:image" content="https://kavennesh.com/surfacemapper.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#02040a;--emerald:#4ade80;--emerald-dim:#10b981;--ink:#e6edf3;--muted:#93a4b3;--line:rgba(74,222,128,0.14);}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;min-height:100vh;color:var(--ink);
+  font-family:"Sora","Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at top,rgba(16,185,129,0.05),transparent 18%),
+    radial-gradient(circle at 85% 15%,rgba(59,130,246,0.05),transparent 16%),
+    linear-gradient(180deg,#04080e 0%,#03060b 28%,#02040a 62%,#010309 100%);
+  background-attachment:fixed;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.045) 2px,rgba(0,0,0,0.045) 4px);}
+#matrix{position:fixed;inset:0;z-index:0;opacity:0.10;pointer-events:none;}
+.page{position:relative;z-index:3;max-width:1080px;margin:0 auto;padding:0 20px;}
+::selection{background:rgba(16,185,129,0.22);color:#fff;}
+a{color:inherit;text-decoration:none;}
+code,pre,.mono,time,.badge,.tag,.eyebrow,.nav,.toc{font-family:ui-monospace,"Monaco","Courier New",monospace;}
+
+/* nav */
+.nav{display:flex;align-items:center;justify-content:space-between;height:80px;}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:0.32em;color:#7ee7a8;text-transform:uppercase;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px rgba(74,222,128,0.8);}
+.navlinks{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;}
+.navlinks a{padding:8px 14px;border:1px solid transparent;border-radius:2px;color:rgba(203,213,225,0.7);transition:.2s;}
+.navlinks a:hover{color:#bff3d0;border-color:rgba(74,222,128,0.18);background:rgba(255,255,255,0.03);}
+.navlinks a.active{color:#bff3d0;border-color:rgba(74,222,128,0.28);background:rgba(74,222,128,0.07);}
+.status{display:flex;align-items:center;gap:6px;color:rgba(126,231,168,0.55);font-size:11px;letter-spacing:0.26em;margin-left:6px;}
+
+/* headings + layout */
+.wrap{padding:32px 0 64px;}
+.eyebrow{display:inline-block;border:1px solid var(--line);background:rgba(74,222,128,0.05);
+  color:rgba(190,242,210,0.8);padding:8px 16px;border-radius:2px;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;}
+.page-title{font-size:52px;line-height:1.02;margin:20px 0 10px;font-weight:700;letter-spacing:-0.01em;}
+.lede{color:var(--muted);font-size:18px;max-width:70ch;line-height:1.7;}
+.dev-note{color:#fbbf24;letter-spacing:.1em;}
+
+/* cards */
+.cards{display:grid;grid-template-columns:1fr;gap:18px;margin-top:32px;}
+@media(min-width:760px){.cards{grid-template-columns:1fr 1fr;}}
+.card{position:relative;overflow:hidden;display:block;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px 22px 22px 26px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012));
+  transition:transform .25s,border-color .25s,box-shadow .25s;}
+.card:hover{transform:translateY(-4px);border-color:rgba(74,222,128,0.28);
+  box-shadow:0 14px 50px rgba(0,0,0,0.5),0 0 0 1px rgba(74,222,128,0.08);}
+.card.is-draft{border-style:dashed;border-color:rgba(148,163,184,0.35);}
+.card[hidden]{display:none;}
+
+/* severity accent bar — 4px inner bar, corners clipped by card radius */
+.accent{position:absolute;left:0;top:0;bottom:0;width:4px;border:0;border-radius:0;}
+.accent.sev-critical{background:#f87171;}
+.accent.sev-high{background:#fb923c;}
+.accent.sev-medium{background:#fbbf24;}
+.accent.sev-low{background:#60a5fa;}
+.accent.sev-info{background:#94a3b8;}
+
+/* featured hero card */
+.card.featured{grid-column:1 / -1;padding:30px 30px 30px 34px;
+  background:linear-gradient(160deg,rgba(74,222,128,0.07),rgba(255,255,255,0.02) 55%,rgba(255,255,255,0.008));}
+.card.featured h2{font-size:28px;}
+.card.featured p{font-size:15.5px;max-width:80ch;}
+.cards.filtering .card.featured{grid-column:auto;padding:22px 22px 22px 26px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012));}
+.cards.filtering .card.featured h2{font-size:20px;}
+.cards.filtering .card.featured p{font-size:14px;}
+
+/* card metadata row */
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 12px;
+  font-family:ui-monospace,"Monaco","Courier New",monospace;font-size:11px;color:var(--muted);}
+.card-meta .reading{color:rgba(203,213,225,0.7);text-transform:uppercase;letter-spacing:0.12em;}
+.dot-sep{color:rgba(148,163,184,0.4);}
+.status-chip{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;border-radius:3px;
+  border:1px solid rgba(148,163,184,0.28);color:#b7c2cf;background:rgba(148,163,184,0.08);}
+.status-chip.st-disclosed{border-color:rgba(74,222,128,0.3);color:#9ae6b4;background:rgba(74,222,128,0.07);}
+.status-chip.st-reported{border-color:rgba(125,211,252,0.28);color:#bae6fd;background:rgba(56,189,248,0.07);}
+.status-chip.st-pending{border-color:rgba(251,191,36,0.28);color:#fcd34d;background:rgba(251,191,36,0.07);}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.card time{color:rgba(126,231,168,0.6);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;}
+.card h2{font-size:20px;margin:6px 0 8px;line-height:1.25;}
+.card p{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 14px;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.badge{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:4px 9px;border-radius:3px;border:1px solid;}
+.badge.program{border-color:rgba(74,222,128,0.25);color:#9ae6b4;background:rgba(74,222,128,0.06);}
+.badge.status{border-color:rgba(148,163,184,0.3);color:#cbd5e1;background:rgba(148,163,184,0.08);}
+.badge.draft{border-color:rgba(251,191,36,0.5);color:#fbbf24;background:rgba(251,191,36,0.1);}
+.sev-critical{border-color:rgba(248,113,113,0.45);color:#fca5a5;background:rgba(248,113,113,0.1);}
+.sev-high{border-color:rgba(251,146,60,0.45);color:#fdba74;background:rgba(251,146,60,0.1);}
+.sev-medium{border-color:rgba(251,191,36,0.45);color:#fcd34d;background:rgba(251,191,36,0.1);}
+.sev-low{border-color:rgba(96,165,250,0.45);color:#93c5fd;background:rgba(96,165,250,0.1);}
+.sev-info{border-color:rgba(148,163,184,0.4);color:#cbd5e1;background:rgba(148,163,184,0.09);}
+.tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:11px;color:rgba(203,213,225,0.72);border:1px solid rgba(255,255,255,0.1);
+  padding:3px 9px;border-radius:3px;background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015));}
+.empty{color:var(--muted);}
+.no-results{color:var(--muted);margin-top:24px;font-family:ui-monospace,monospace;font-size:14px;}
+
+/* stats bar */
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;}
+.stat{flex:1 1 auto;min-width:96px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;
+  background:linear-gradient(160deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));}
+.stat-num{font-family:ui-monospace,"Monaco","Courier New",monospace;font-size:26px;font-weight:700;color:#eaf2f7;line-height:1;}
+.stat-num.sev-critical{color:#fca5a5;background:none;border:0;}
+.stat-num.sev-high{color:#fdba74;background:none;border:0;}
+.stat-num.sev-medium{color:#fcd34d;background:none;border:0;}
+.stat-num.sev-low{color:#93c5fd;background:none;border:0;}
+.stat-num.sev-info{color:#cbd5e1;background:none;border:0;}
+.stat-label{margin-top:6px;font-family:ui-monospace,monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:22px;
+  padding-bottom:20px;border-bottom:1px solid var(--line);}
+.search{flex:1 1 260px;}
+.search input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;
+  padding:10px 14px;color:var(--ink);font-family:ui-monospace,monospace;font-size:13px;outline:none;transition:border-color .2s;}
+.search input:focus{border-color:rgba(74,222,128,0.4);}
+.search input::placeholder{color:rgba(147,164,179,0.55);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03);color:rgba(203,213,225,0.75);border-radius:999px;padding:6px 13px;
+  font-family:ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;transition:.18s;}
+.chip:hover{border-color:rgba(74,222,128,0.3);color:#bff3d0;}
+.chip.is-active{border-color:rgba(74,222,128,0.45);background:rgba(74,222,128,0.1);color:#bff3d0;}
+.chip-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.chip-dot.sev-critical{background:#f87171;}
+.chip-dot.sev-high{background:#fb923c;}
+.chip-dot.sev-medium{background:#fbbf24;}
+.chip-dot.sev-low{background:#60a5fa;}
+.chip-dot.sev-info{background:#94a3b8;}
+.sort{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.sort-label{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+.sort select{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:8px;
+  padding:8px 12px;color:var(--ink);font-family:ui-monospace,monospace;font-size:12px;outline:none;cursor:pointer;}
+.sort select:focus{border-color:rgba(74,222,128,0.4);}
+
+/* post */
+.post .back{display:inline-block;color:rgba(126,231,168,0.7);font-size:12px;letter-spacing:0.16em;
+  text-transform:uppercase;margin-bottom:18px;}
+.post .back:hover{color:var(--emerald);}
+.post-head h1{font-size:38px;line-height:1.1;margin:14px 0 12px;}
+.post-head .meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:var(--muted);}
+.post-head time{color:rgba(126,231,168,0.6);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;}
+.post-grid{display:grid;grid-template-columns:1fr;gap:28px;margin-top:28px;}
+@media(min-width:900px){.post-grid{grid-template-columns:220px 1fr;}}
+.toc{position:sticky;top:24px;align-self:start;border-left:1px solid var(--line);padding-left:16px;font-size:13px;}
+.toc-title{color:rgba(126,231,168,0.6);text-transform:uppercase;letter-spacing:0.2em;font-size:11px;margin-bottom:10px;}
+.toc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+.toc li.lvl3{padding-left:14px;}
+.toc a{color:rgba(203,213,225,0.7);}
+.toc a:hover{color:var(--emerald);}
+@media(max-width:899px){.toc{position:static;border-left:none;padding-left:0;border-bottom:1px solid var(--line);padding-bottom:16px;}}
+
+/* prose */
+.prose{max-width:74ch;font-size:16px;line-height:1.75;color:#dbe4ec;}
+.prose h2{font-size:26px;margin:36px 0 12px;padding-top:6px;color:#fff;letter-spacing:-0.01em;}
+.prose h3{font-size:20px;margin:26px 0 10px;color:#eaf2f7;}
+.prose h2 .header-anchor,.prose h3 .header-anchor{color:rgba(74,222,128,0.45);margin-right:8px;text-decoration:none;font-weight:400;}
+.prose h2 .header-anchor:hover,.prose h3 .header-anchor:hover{color:var(--emerald);}
+.prose p{margin:0 0 16px;}
+.prose a{color:#7ee7a8;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(74,222,128,0.4);}
+.prose a:hover{text-decoration-color:var(--emerald);}
+.prose ul,.prose ol{padding-left:22px;margin:0 0 16px;}
+.prose li{margin:6px 0;}
+.prose strong{color:#fff;}
+.prose blockquote{border-left:3px solid rgba(74,222,128,0.4);margin:18px 0;padding:6px 18px;
+  background:rgba(74,222,128,0.04);color:#c8d4de;border-radius:0 6px 6px 0;}
+.prose code{font-size:13.5px;background:rgba(148,163,184,0.14);padding:2px 6px;border-radius:4px;color:#e6edf3;}
+.prose pre{margin:0 0 18px;padding:16px 18px;border-radius:10px;overflow-x:auto;
+  border:1px solid rgba(74,222,128,0.14);background:#050a12;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
+.prose pre code{background:none;padding:0;font-size:13.5px;line-height:1.6;color:#cfe8d6;}
+.prose table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:14px;}
+.prose th,.prose td{border:1px solid rgba(255,255,255,0.1);padding:8px 12px;text-align:left;}
+.prose th{background:rgba(74,222,128,0.06);color:#bff3d0;}
+
+/* highlight.js (emerald-tuned dark) */
+.hljs{color:#cfe8d6;}
+.hljs-comment,.hljs-quote{color:#5b7183;font-style:italic;}
+.hljs-keyword,.hljs-selector-tag,.hljs-built_in,.hljs-name{color:#5eead4;}
+.hljs-string,.hljs-attr,.hljs-template-tag{color:#86efac;}
+.hljs-number,.hljs-literal,.hljs-variable,.hljs-symbol{color:#fbbf24;}
+.hljs-title,.hljs-section,.hljs-function .hljs-title{color:#7dd3fc;}
+.hljs-type,.hljs-class .hljs-title{color:#93c5fd;}
+.hljs-meta,.hljs-tag{color:#94a3b8;}
+.hljs-attribute{color:#fda4af;}
+.hljs-deletion{color:#fca5a5;}
+.hljs-addition{color:#86efac;}
+.hljs-emphasis{font-style:italic;}
+.hljs-strong{font-weight:700;}
+
+/* banners */
+.draft-banner{border:1px solid rgba(251,191,36,0.5);background:rgba(251,191,36,0.1);color:#fde68a;
+  padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;letter-spacing:0.04em;
+  font-family:ui-monospace,monospace;}
+
+/* 404 */
+.notfound{min-height:60vh;}
+.nf-links{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+.btn{border:1px solid var(--emerald);color:#062012;background:var(--emerald);padding:11px 20px;border-radius:8px;
+  font-weight:600;font-size:14px;}
+.btn.ghost{background:transparent;color:#8ff0ad;border-color:rgba(74,222,128,0.5);}
+.btn:hover{filter:brightness(1.05);}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);
+  padding:22px 0 30px;margin-top:20px;color:rgba(147,164,179,0.7);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;
+  font-family:ui-monospace,monospace;}
+.foot a:hover{color:var(--emerald);}
+</style>
+
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="page">
+<header class="nav">
+  <a class="brand" href="/"><span class="dot"></span>KB_SEC</a>
+  <nav class="navlinks">
+    <a href="/">HOME</a>
+    <a class="active" href="/writeups/">[WRITEUPS]</a>
+    <span class="status"><span class="dot"></span>ONLINE</span>
+  </nav>
+</header>
+<main class="wrap post">
+  
+  <a class="back" href="/writeups/">&larr; All writeups</a>
+  <article>
+    <div class="post-head">
+      <div class="badges">
+        <span class="badge sev-medium">Medium</span>
+        <span class="badge program">HackerOne · Vercel Open Source</span>
+        <span class="badge status">Duplicate (Independent Discovery)</span>
+      </div>
+      <h1>Reading /root/.ssh/id_rsa Through an AI Agent: Path Traversal in Vercel's vercel-optimize Skill (CWE-22/73)</h1>
+      <div class="meta">
+        <time datetime="2026-06-26">Jun 26, 2026</time>
+        <span class="tags"><span class="tag">path-traversal</span><span class="tag">local-file-read</span><span class="tag">ai-agent-security</span><span class="tag">prompt-injection</span><span class="tag">node</span></span>
+      </div>
+    </div>
+    <div class="post-grid">
+      <nav class="toc" aria-label="Table of contents">
+    <div class="toc-title">On this page</div>
+    <ul><li class="lvl2"><a href="#tldr">TL;DR</a></li><li class="lvl2"><a href="#why-this-is-an-ai-agent-bug-not-a-plain-path-traversal-bug">Why this is an AI-agent bug, not a plain path-traversal bug</a></li><li class="lvl2"><a href="#the-vulnerable-code">The vulnerable code</a></li><li class="lvl2"><a href="#the-taint-path-untrusted-repo-content-to-file-read">The taint path — untrusted repo content to file read</a></li><li class="lvl2"><a href="#proof-of-concept">Proof of concept</a></li><li class="lvl2"><a href="#impact">Impact</a></li><li class="lvl2"><a href="#remediation">Remediation</a></li><li class="lvl2"><a href="#the-broader-lesson">The broader lesson</a></li><li class="lvl2"><a href="#disclosure-timeline">Disclosure timeline</a></li><li class="lvl2"><a href="#references">References</a></li></ul>
+  </nav>
+      <div class="prose"><p><em>By Kavennesh Balachandar · HackerOne · Vercel Open Source Bug Bounty Program</em></p>
+<h2 id="tldr" tabindex="-1"><a class="header-anchor" href="#tldr">#</a> TL;DR</h2>
+<p><code>vercel-optimize</code> (in <code>vercel-labs/agent-skills</code>) checks the recommendations its
+LLM sub-agents produce by reading the files those recommendations reference. The
+path helper <code>repoPaths()</code> applies <strong>no containment</strong> — absolute paths are
+returned verbatim, and relative paths are joined without rejecting <code>../</code>.
+Because those paths come from sub-agent output generated while reading a
+possibly-untrusted codebase, an attacker who gets content into an analyzed repo
+can steer a sub-agent (indirect prompt injection) into emitting paths like
+<code>/root/.ssh/id_rsa</code> or <code>../../../../.aws/credentials</code>. The verifier reads them,
+and its <code>pattern_count</code> / <code>pattern_exists</code> results become an existence-and-content
+oracle. Concrete local file disclosure via an AI agent — exactly the &quot;prompt
+injection with real impact&quot; class the program invites. Severity: <strong>Medium</strong>
+(CVSS 5.0), gated at AC:H because it needs the victim to run the skill on
+attacker-influenced content.</p>
+<h2 id="why-this-is-an-ai-agent-bug-not-a-plain-path-traversal-bug" tabindex="-1"><a class="header-anchor" href="#why-this-is-an-ai-agent-bug-not-a-plain-path-traversal-bug">#</a> Why this is an AI-agent bug, not a plain path-traversal bug</h2>
+<p>Path traversal is old. What makes this one interesting is <em>where the tainted
+path comes from</em>. <code>vercel-optimize</code> is an &quot;agent skill&quot; — a workflow that spawns
+LLM sub-agents to analyze a user's codebase and propose optimizations. To avoid
+hallucinated recommendations, it has a nice idea: <strong>verify</strong> each claim by
+actually reading the file it points at and checking the pattern is there.</p>
+<p>The catch is that the file paths being verified are <em>authored by the sub-agents</em>,
+and the sub-agents author them while reading the target repository. So the repo's
+contents can influence what paths get emitted. A traversal payload doesn't arrive
+in an HTTP parameter here — it arrives as model output that was shaped by
+attacker-controlled input the model read. The verifier then treats that output as
+a trustworthy filesystem path.</p>
+<h2 id="the-vulnerable-code" tabindex="-1"><a class="header-anchor" href="#the-vulnerable-code">#</a> The vulnerable code</h2>
+<p><code>skills/vercel-optimize/lib/verify-claim.mjs</code>:</p>
+<pre class="hljs"><code class="language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">repoPaths</span>(<span class="hljs-params">repoRoot, file, projectRootDirectory = <span class="hljs-literal">null</span></span>) {
+  <span class="hljs-keyword">if</span> (!file) <span class="hljs-keyword">return</span> [];
+  <span class="hljs-keyword">if</span> (<span class="hljs-title function_">isAbsolute</span>(file)) <span class="hljs-keyword">return</span> [file];        <span class="hljs-comment">// (1) absolute path returned verbatim</span>
+  <span class="hljs-keyword">const</span> out = [<span class="hljs-title function_">join</span>(repoRoot, file)];         <span class="hljs-comment">// (2) &#x27;../&#x27; in `file` escapes repoRoot</span>
+  <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">readClaimFile</span>(<span class="hljs-params">claim</span>) {
+  <span class="hljs-keyword">const</span> path = <span class="hljs-keyword">await</span> <span class="hljs-title function_">firstAccessiblePath</span>(claim);
+  <span class="hljs-keyword">return</span> { path, <span class="hljs-attr">content</span>: <span class="hljs-keyword">await</span> <span class="hljs-title function_">readFile</span>(path, <span class="hljs-string">&#x27;utf-8&#x27;</span>) };   <span class="hljs-comment">// sink</span>
+}
+</code></pre>
+<p>Two independent escapes: an absolute path is returned and read as-is, and a
+relative path is <code>join</code>ed without a normalize-then-verify step, so
+<code>join(repoRoot, &quot;../../../../etc/passwd&quot;)</code> walks straight out of <code>repoRoot</code>. The
+verifier functions <code>verifyFileExists</code>, <code>verifyPatternCount</code>, and
+<code>verifyPatternExists</code> call this on attacker-influenced <code>claim.file</code> /
+<code>claim.repoRoot</code> — and <code>pattern_count</code> returns the raw match count in its result,
+which is a direct content-exfiltration oracle.</p>
+<h2 id="the-taint-path-untrusted-repo-content-to-file-read" tabindex="-1"><a class="header-anchor" href="#the-taint-path-untrusted-repo-content-to-file-read">#</a> The taint path — untrusted repo content to file read</h2>
+<ol>
+<li><code>vercel-optimize</code> spawns sub-agents to read the user's codebase.</li>
+<li><code>scripts/collect-sub-agent-outputs.mjs</code> assembles <code>recommendations.json</code>
+<strong>verbatim</strong> from those sub-agents' output (<code>isRecordObject</code> only checks a key
+exists).</li>
+<li><code>lib/extract-claims.mjs</code> copies each recommendation's <code>affectedFiles[]</code>,
+<code>findingRefs[]</code>, and <code>verifiableClaims[].{file,repoRoot}</code> into claims with <strong>no
+sanitization</strong>.</li>
+<li><code>scripts/verify-and-regen.mjs</code> → <code>verifyClaim()</code> → <code>readClaimFile()</code> →
+<code>readFile(unconstrainedPath)</code>.</li>
+</ol>
+<p>So a malicious file in an analyzed repo — a dependency, an external contributor's
+PR branch, an MDX doc, any attacker-supplied project — is indirect-prompt-injection
+input that can make a sub-agent emit <code>file: &quot;/root/.ssh/id_rsa&quot;</code>.</p>
+<blockquote>
+<p><strong>Amplifier:</strong> <code>lib/repo-root.mjs</code> <code>detectRepoRoot()</code> lets an attacker-controlled
+<code>affectedFiles[0]</code> (e.g. <code>/etc/passwd</code>) pin <code>repoRoot</code> to <code>/</code>, after which even
+plain relative claim paths resolve from the filesystem root.</p>
+</blockquote>
+<h2 id="proof-of-concept" tabindex="-1"><a class="header-anchor" href="#proof-of-concept">#</a> Proof of concept</h2>
+<p>The PoC drives the <strong>real shipped CLI</strong> (<code>scripts/verify-finding.mjs</code> →
+<code>verifyClaim</code>) with attacker-controlled claims against fixtures — a fake
+&quot;analyzed project&quot; plus an out-of-repo <code>.aws/credentials</code>:</p>
+<pre class="hljs"><code class="language-bash">git <span class="hljs-built_in">clone</span> https://github.com/vercel-labs/agent-skills
+VOPT_DIR=<span class="hljs-string">&quot;<span class="hljs-variable">$PWD</span>/agent-skills/skills/vercel-optimize&quot;</span> node poc_file_read.mjs
+</code></pre>
+<pre class="hljs"><code class="language-text">✓ absolute path /etc/passwd read -&gt; verified (&quot;/etc/passwd exists&quot;)
+✓ content of out-of-repo credentials read -&gt; match count leaked: actual=1
+✓ &#x27;../&#x27; from repoRoot escaped to the secret -&gt; verified
+✓ pattern_exists oracle reflects real bytes (correct guess=verified, wrong guess=failed)
+</code></pre>
+<p>Each verifier mode is a different primitive:</p>
+<ul>
+<li><code>file_exists</code> on an absolute out-of-project path → an existence oracle.</li>
+<li><code>pattern_count</code> returns the real match count of an out-of-project file → content
+read plus a numeric oracle.</li>
+<li><code>file_exists</code> with <code>repoRoot=&lt;project&gt;/app</code>, <code>file=&quot;../../.../credentials&quot;</code> →
+the <code>../</code> escape.</li>
+<li><code>pattern_exists</code> returns <code>verified</code> for the correct secret bytes and <code>failed</code>
+for a wrong guess → anchored-regex, byte-by-byte secret reconstruction.</li>
+</ul>
+<p>The leaked results are written to <code>verify.json</code> and flow back into the
+orchestrating agent's context and the rendered report — so the exfiltrated bytes
+don't just sit in a log, they re-enter the agent loop.</p>
+<h2 id="impact" tabindex="-1"><a class="header-anchor" href="#impact">#</a> Impact</h2>
+<p>Disclosure of the existence and content of any file readable by the agent
+process — SSH private keys, cloud credentials, <code>.env</code> secrets, tokens, and files
+belonging to other projects on the same machine.</p>
+<p><strong>Severity: Medium — <code>CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N</code> (5.0).</strong> The
+<code>AC:H</code> / <code>UI:R</code> reflect that exploitation requires the victim to run
+<code>vercel-optimize</code> on attacker-influenced content. The honest escalation note: if
+this skill is ever run <strong>server-side on untrusted repositories</strong>, the same
+defect becomes a remote, cross-tenant file read (High/Critical). That's flagged
+for the team, not claimed here.</p>
+<h2 id="remediation" tabindex="-1"><a class="header-anchor" href="#remediation">#</a> Remediation</h2>
+<p>Resolve-then-verify containment for every candidate path, and refuse absolute
+paths:</p>
+<pre class="hljs"><code class="language-js"><span class="hljs-keyword">import</span> { resolve, sep } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;node:path&#x27;</span>;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">repoPaths</span>(<span class="hljs-params">repoRoot, file</span>) {
+  <span class="hljs-keyword">if</span> (!file) <span class="hljs-keyword">return</span> [];
+  <span class="hljs-keyword">const</span> base = <span class="hljs-title function_">resolve</span>(repoRoot);
+  <span class="hljs-keyword">const</span> p = <span class="hljs-title function_">resolve</span>(base, file);                          <span class="hljs-comment">// collapses &#x27;../&#x27;</span>
+  <span class="hljs-keyword">if</span> (p !== base &amp;&amp; !p.<span class="hljs-title function_">startsWith</span>(base + sep)) <span class="hljs-keyword">return</span> []; <span class="hljs-comment">// reject escapes + absolute</span>
+  <span class="hljs-keyword">return</span> [p];
+}
+</code></pre>
+<p>Additionally: don't let a recommendation override <code>repoRoot</code>, and don't use
+untrusted <code>affectedFiles[0]</code> as a repo-root probe.</p>
+<h2 id="the-broader-lesson" tabindex="-1"><a class="header-anchor" href="#the-broader-lesson">#</a> The broader lesson</h2>
+<p>Any agent step that turns model output into a filesystem, network, or shell
+operation is a trust boundary, even when the model is &quot;yours.&quot; Verification code
+that reads model-chosen paths has to treat those paths as fully untrusted input —
+because upstream, they were shaped by whatever the model read. The fix is the
+same discipline as any traversal sink: normalize, then confine to an allowed root.</p>
+<h2 id="disclosure-timeline" tabindex="-1"><a class="header-anchor" href="#disclosure-timeline">#</a> Disclosure timeline</h2>
+<ul>
+<li><strong>2026-06-26</strong> — Reported to Vercel Open Source via HackerOne (#3827691),
+against <code>vercel-labs/agent-skills</code> → <code>skills/vercel-optimize</code>.</li>
+<li>Closed as <strong>duplicate</strong> (independent discovery).</li>
+<li>Public disclosure pending program approval.</li>
+</ul>
+<h2 id="references" tabindex="-1"><a class="header-anchor" href="#references">#</a> References</h2>
+<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/22.html">CWE-22 — Improper Limitation of a Pathname to a Restricted Directory</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/73.html">CWE-73 — External Control of File Name or Path</a></li>
+<li>OWASP guidance on path traversal prevention (canonicalize, then verify prefix containment).</li>
+</ul>
+</div>
+    </div>
+  </article>
+</main>
+<footer class="foot">
+  <span>© 2026 Kavennesh Balachandar</span>
+  <a href="/writeups/rss.xml">RSS</a>
+</footer>
+</div>
+<script>(function(){
+  var c=document.getElementById('matrix'); if(!c) return;
+  var x=c.getContext('2d'); var fs=14, cols, drops;
+  var glyphs='01<>[]{}/\\|=+-*ｱｶｻﾀﾅﾊﾏﾔﾗ0123456789ABCDEF'.split('');
+  function resize(){ c.width=innerWidth; c.height=innerHeight; cols=Math.floor(c.width/fs); drops=Array(cols).fill(1); }
+  resize(); addEventListener('resize',resize);
+  function draw(){
+    x.fillStyle='rgba(2,4,10,0.08)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='rgba(74,222,128,0.45)'; x.font=fs+'px monospace';
+    for(var i=0;i<drops.length;i++){
+      var t=glyphs[Math.floor(Math.random()*glyphs.length)];
+      x.fillText(t,i*fs,drops[i]*fs);
+      if(drops[i]*fs>c.height && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce){ setInterval(draw, 60); } else { draw(); }
+})();</script>
+</body>
+</html>
