@@ -48,12 +48,5 @@
       <pubDate>Fri, 26 Jun 2026 00:00:00 GMT</pubDate>
       <description>The vercel-optimize skill verifies its own sub-agents' claims by reading the files they point at — with no path containment. An attacker who plants content in an analyzed repo can steer a sub-agent into emitting out-of-repo paths, turning the verifier's match-count result into a file-read oracle.</description>
     </item>
-    <item>
-      <title>Enumerating an Invoice Database Without Logging In: Unauthenticated IDOR at PlanetHoster</title>
-      <link>https://kavennesh.com/writeups/planethoster-unauth-idor-invoice-api/</link>
-      <guid isPermaLink="true">https://kavennesh.com/writeups/planethoster-unauth-idor-invoice-api/</guid>
-      <pubDate>Wed, 24 Jun 2026 00:00:00 GMT</pubDate>
-      <description>A 'pay invoice as a guest' endpoint answered with zero credentials, keyed lookups solely on a short sequential integer ID, and returned a clean not-found for bad IDs — making the numeric ID the only gate on the customer invoice database. A study in reporting a sensitive IDOR responsibly.</description>
-    </item>
   </channel>
 </rss>
